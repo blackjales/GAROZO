@@ -1,0 +1,260 @@
+/* ==========================================================================
+   GAROZO! Party Game — Coreografía de Animaciones (css/animations.css)
+   Efecto Boil (Trazo Vivo), Patada de Masita, Giro 3D del Dado,
+   Estampida ¡GAROZOOO! y Fiesta ¡WIN!
+   ========================================================================== */
+
+/* 1. EFECTO BOIL (Trazo Vivo de Boceto Dibujado a Mano) */
+@keyframes sketchBoil {
+  0%   { transform: rotate(-0.7deg) scale(1.0); }
+  50%  { transform: rotate(0.75deg) scale(1.008, 0.994); }
+  100% { transform: rotate(-0.7deg) scale(1.0); }
+}
+
+.boil-effect {
+  animation: sketchBoil 0.36s steps(2, end) infinite;
+}
+
+/* 2. RESPIRACIÓN Y ESTADOS DE LA MASITA ANFITRIONA */
+@keyframes hostIdleBreathe {
+  0%, 100% { transform: translateY(0px) scale(1, 1) rotate(-0.6deg); }
+  50%      { transform: translateY(-4px) scale(0.98, 1.03) rotate(0.8deg); }
+}
+
+.host-masita-img.state-idle {
+  animation: hostIdleBreathe 1.6s ease-in-out infinite;
+}
+
+/* Masita nerviosa en racha >= 3 tiradas */
+@keyframes hostNervousTremble {
+  0%   { transform: translate(0px, 0px) rotate(-1.5deg); }
+  25%  { transform: translate(-2px, 1px) rotate(1.5deg); }
+  50%  { transform: translate(2px, -1px) rotate(-1.2deg); }
+  75%  { transform: translate(-1px, 2px) rotate(1.8deg); }
+  100% { transform: translate(0px, 0px) rotate(-1.5deg); }
+}
+
+.host-masita-img.state-nervous {
+  animation: hostNervousTremble 0.22s steps(2, end) infinite;
+}
+
+@keyframes sweatPulse {
+  0%, 100% { opacity: 0.95; transform: translateY(0px) scale(0.95) rotate(-4deg); }
+  50%      { opacity: 1; transform: translateY(4px) scale(1.06) rotate(4deg); }
+}
+
+.host-fx-sweat.is-active {
+  opacity: 1;
+  animation: sweatPulse 0.45s steps(2, end) infinite;
+}
+
+/* Carrera, Impulso y Patada con Squash & Stretch hacia el Dado */
+@keyframes hostRunAndKick {
+  0% {
+    transform: translateX(0px) scale(1, 1) rotate(0deg);
+  }
+  22% {
+    /* Toma impulso hacia atrás (anticipation) */
+    transform: translateX(18px) translateY(3px) scale(1.12, 0.88) rotate(10deg);
+  }
+  48% {
+    /* Carrera explosiva e impacto de patada contra el dado */
+    transform: translateX(-34px) translateY(-10px) scale(0.88, 1.15) rotate(-16deg);
+  }
+  68% {
+    /* Rebote elástico post-impacto */
+    transform: translateX(-14px) translateY(2px) scale(1.06, 0.94) rotate(-4deg);
+  }
+  100% {
+    transform: translateX(0px) scale(1, 1) rotate(0deg);
+  }
+}
+
+.host-masita-img.state-kick {
+  animation: hostRunAndKick 0.56s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes dustPuff {
+  0%   { opacity: 0; transform: scaleX(-1) translateX(0px) scale(0.5); }
+  25%  { opacity: 1; transform: scaleX(-1) translateX(-8px) scale(1.05); }
+  80%  { opacity: 0.85; transform: scaleX(-1) translateX(-22px) scale(1.18); }
+  100% { opacity: 0; transform: scaleX(-1) translateX(-30px) scale(1.25); }
+}
+
+.host-fx-dust.is-active {
+  animation: dustPuff 0.52s ease-out forwards;
+}
+
+/* Salto de alegría al Plantarse */
+@keyframes hostHappyJump {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  20%      { transform: translateY(4px) scale(1.12, 0.88); }
+  50%      { transform: translateY(-22px) scale(0.92, 1.1) rotate(-5deg); }
+  75%      { transform: translateY(-6px) scale(1.03, 0.97) rotate(4deg); }
+}
+
+.host-masita-img.state-happy {
+  animation: hostHappyJump 0.65s ease-out infinite;
+}
+
+/* Shock dramático al sacar un 1 (Garozo) */
+@keyframes hostShockFreeze {
+  0%   { transform: scale(1.25, 0.8) rotate(8deg); }
+  30%  { transform: translateY(-12px) scale(0.88, 1.18) rotate(-10deg); }
+  60%  { transform: translateY(0px) scale(1.08, 0.92) rotate(4deg); }
+  100% { transform: translateY(2px) scale(1, 1) rotate(0deg); }
+}
+
+.host-masita-img.state-dead {
+  animation: hostShockFreeze 0.45s ease-out forwards;
+}
+
+/* 3. SALTO DEL DADO 3D Y SOMBRA ELÁSTICA */
+@keyframes diceAirJump {
+  0%   { transform: translateY(0px) scale(1); }
+  30%  { transform: translateY(-42px) scale(1.12); }
+  58%  { transform: translateY(0px) scale(0.94, 1.06); }
+  76%  { transform: translateY(-14px) scale(1.04); }
+  100% { transform: translateY(0px) scale(1); }
+}
+
+.dice-scene.is-jumping {
+  animation: diceAirJump 0.72s cubic-bezier(0.28, 0.84, 0.42, 1) forwards;
+}
+
+@keyframes shadowBounce {
+  0%   { transform: scale(1); opacity: 0.85; }
+  30%  { transform: scale(0.48); opacity: 0.32; }
+  58%  { transform: scale(1.15); opacity: 0.95; }
+  76%  { transform: scale(0.78); opacity: 0.55; }
+  100% { transform: scale(1); opacity: 0.85; }
+}
+
+.dice-shadow.is-jumping {
+  animation: shadowBounce 0.72s cubic-bezier(0.28, 0.84, 0.42, 1) forwards;
+}
+
+/* Pop del contador de puntos cuando suma */
+@keyframes scorePop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.26) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.turn-points-number.pop-anim {
+  animation: scorePop 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Temblor de la barra de codicia en racha alta */
+@keyframes greedShake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-2px) rotate(-0.6deg); }
+  75%      { transform: translateX(2px) rotate(0.6deg); }
+}
+
+.greed-wedge-bar.high-streak {
+  animation: greedShake 0.2s steps(2, end) infinite;
+}
+
+/* 4. SECUENCIA «¡GAROZOOO!» (SCREEN SHAKE, BANNER DROP Y 4 PATRONES DE ESTAMPIDA) */
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  12%      { transform: translate(-8px, -5px) rotate(-1.2deg); }
+  25%      { transform: translate(8px, 6px) rotate(1.2deg); }
+  37%      { transform: translate(-7px, 4px) rotate(-0.9deg); }
+  50%      { transform: translate(6px, -6px) rotate(0.9deg); }
+  62%      { transform: translate(-5px, 3px) rotate(-0.5deg); }
+  75%      { transform: translate(4px, -3px) rotate(0.4deg); }
+}
+
+.screen-shake-active {
+  animation: screenShake 0.55s ease-in-out;
+}
+
+@keyframes garozoBannerSlam {
+  0%   { transform: translateY(-160px) scale(0.4) rotate(-8deg); opacity: 0; }
+  55%  { transform: translateY(12px) scale(1.12) rotate(3deg); opacity: 1; }
+  75%  { transform: translateY(-6px) scale(0.96) rotate(-2deg); opacity: 1; }
+  100% { transform: translateY(0px) scale(1) rotate(-1deg); opacity: 1; }
+}
+
+.garozo-banner-img.slam-in {
+  animation: garozoBannerSlam 0.48s cubic-bezier(0.22, 1.35, 0.36, 1) forwards;
+}
+
+/* Patrón 1: Carrera frenética de izquierda a derecha dando brinquitos */
+@keyframes stampedeRunLTR {
+  0%   { transform: translate3d(-150px, 0px, 0) scaleX(1) rotate(-6deg); }
+  20%  { transform: translate3d(15vw, -22px, 0) scaleX(1) rotate(8deg); }
+  40%  { transform: translate3d(40vw, 4px, 0) scaleX(1) rotate(-8deg); }
+  60%  { transform: translate3d(65vw, -24px, 0) scaleX(1) rotate(7deg); }
+  80%  { transform: translate3d(90vw, 2px, 0) scaleX(1) rotate(-6deg); }
+  100% { transform: translate3d(118vw, -12px, 0) scaleX(1) rotate(5deg); }
+}
+
+/* Patrón 2: Carrera frenética de derecha a izquierda */
+@keyframes stampedeRunRTL {
+  0%   { transform: translate3d(115vw, 0px, 0) scaleX(-1) rotate(6deg); }
+  25%  { transform: translate3d(82vw, -20px, 0) scaleX(-1) rotate(-8deg); }
+  50%  { transform: translate3d(48vw, 6px, 0) scaleX(-1) rotate(8deg); }
+  75%  { transform: translate3d(18vw, -18px, 0) scaleX(-1) rotate(-6deg); }
+  100% { transform: translate3d(-160px, 0px, 0) scaleX(-1) rotate(6deg); }
+}
+
+/* Patrón 3: Rodando / dando vueltas de campana por los aires */
+@keyframes stampedeTumbleLTR {
+  0%   { transform: translate3d(-150px, 20px, 0) rotate(0deg) scale(0.95); }
+  30%  { transform: translate3d(28vw, -55px, 0) rotate(240deg) scale(1.08); }
+  65%  { transform: translate3d(68vw, 15px, 0) rotate(520deg) scale(0.96); }
+  100% { transform: translate3d(118vw, -35px, 0) rotate(760deg) scale(1.05); }
+}
+
+/* Patrón 4: Patinando de bruces y chocando en el centro */
+@keyframes stampedeSlideRTL {
+  0%   { transform: translate3d(115vw, 10px, 0) rotate(12deg); }
+  35%  { transform: translate3d(52vw, 14px, 0) scale(1.12, 0.86) rotate(-4deg); }
+  55%  { transform: translate3d(42vw, -16px, 0) scale(0.92, 1.1) rotate(-14deg); }
+  100% { transform: translate3d(-160px, 12px, 0) rotate(4deg); }
+}
+
+/* 5. SECUENCIA DE VICTORIA «WIN!» (DESFILE DE TROMPETA Y RONDA FELIZ) */
+@keyframes trumpetMarch {
+  0%, 100% { transform: translateX(-8px) translateY(0px) rotate(-4deg) scale(1); }
+  25%      { transform: translateX(0px) translateY(-10px) rotate(3deg) scale(1.05); }
+  50%      { transform: translateX(8px) translateY(0px) rotate(5deg) scale(1); }
+  75%      { transform: translateX(0px) translateY(-8px) rotate(-2deg) scale(1.04); }
+}
+
+.win-trumpet-masita {
+  animation: trumpetMarch 0.85s ease-in-out infinite;
+}
+
+@keyframes happyRoundBounce {
+  0%, 100% { transform: translateY(0px) rotate(-5deg); }
+  50%      { transform: translateY(-14px) rotate(6deg); }
+}
+
+.win-happy-dancer {
+  animation: happyRoundBounce 0.65s ease-in-out infinite;
+}
+
+.win-happy-dancer:nth-child(even) {
+  animation-delay: 0.25s;
+}
+
+/* Confeti de grafito y papel */
+@keyframes confettiFall {
+  0%   { transform: translate3d(0, -30px, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate3d(var(--drift, 20px), 260px, 0) rotate(540deg); opacity: 0; }
+}
+
+.sketch-confetti-piece {
+  position: absolute;
+  top: -15px;
+  width: 11px;
+  height: 7px;
+  border: 1.5px solid #221e1b;
+  border-radius: 2px;
+  pointer-events: none;
+  animation: confettiFall 1.8s linear infinite;
+}

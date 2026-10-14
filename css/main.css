@@ -1,0 +1,1256 @@
+/* ==========================================================================
+   GAROZO! Party Game — Estética "Sketchbook Vivo" (css/main.css)
+   Mobile-First, Papel Cálido (#fdfaf1), Trazos de Grafito y Notas Adhesivas
+   ========================================================================== */
+
+:root {
+  --paper-bg: #fdfaf1;
+  --paper-warm: #f6efe0;
+  --paper-grid: rgba(90, 82, 72, 0.085);
+  --graphite-dark: #221e1b;
+  --graphite-mid: #4a433d;
+  --graphite-light: #8c8275;
+  --marker-yellow: #ffe270;
+  --marker-yellow-bright: #ffea85;
+  --accent-danger: #d93829;
+  --accent-orange: #f59e0b;
+  --accent-success: #2b9348;
+  --shadow-sketch: 4px 5px 0px #221e1b;
+  --shadow-sketch-sm: 2px 3px 0px #221e1b;
+  --shadow-sketch-lg: 6px 8px 0px rgba(34, 30, 27, 0.9);
+  --font-hand: 'Comic Neue', 'Patrick Hand', 'Chalkboard SE', 'Comic Sans MS', cursive, sans-serif;
+  --font-display: 'Fredoka', 'Arial Rounded MT Bold', 'Comic Sans MS', cursive, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100dvh;
+  background-color: #ece4d0;
+  background-image:
+    linear-gradient(to right, var(--paper-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px),
+    radial-gradient(circle at 50% 30%, #fdfaf1 0%, #e8dec6 100%);
+  background-size: 24px 24px, 24px 24px, 100% 100%;
+  color: var(--graphite-dark);
+  font-family: var(--font-hand);
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Textura sutil de grano de papel */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.22;
+  background-image: radial-gradient(rgba(34, 30, 27, 0.18) 0.75px, transparent 0.75px);
+  background-size: 12px 12px;
+}
+
+/* ==========================================================================
+   CONTENEDOR PRINCIPAL Y CABECERA EXTERIOR
+   ========================================================================== */
+.app-shell {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 540px;
+  min-height: 100dvh;
+  padding: 8px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Barra superior con Logo y Controles Rápidos */
+.top-brand-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  position: relative;
+}
+
+.brand-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-logo-img {
+  height: 54px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(1px 2px 0px rgba(34, 30, 27, 0.15));
+}
+
+.top-utility-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sketch-icon-btn {
+  background: var(--paper-bg);
+  border: 2.5px solid var(--graphite-dark);
+  border-radius: 12px 15px 11px 14px / 14px 11px 15px 12px;
+  box-shadow: var(--shadow-sketch-sm);
+  padding: 6px 10px;
+  font-family: var(--font-hand);
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--graphite-dark);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.12s ease, background-color 0.12s ease;
+}
+
+.sketch-icon-btn:hover {
+  background: var(--marker-yellow-bright);
+  transform: translateY(-1px) rotate(-1deg);
+}
+
+.sketch-icon-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 1px 0px var(--graphite-dark);
+}
+
+.sketch-icon-btn.is-muted {
+  background: #ffd6d6;
+  color: var(--accent-danger);
+}
+
+/* ==========================================================================
+   HOJA DE LIBRETA PRINCIPAL (CON ANILLAS Y PÁGINAS APILADAS)
+   ========================================================================== */
+.notebook-wrapper {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 14px;
+}
+
+/* Hojas apiladas debajo para efecto de cuaderno físico */
+.notebook-wrapper::before,
+.notebook-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 4px -3px -6px 3px;
+  background: #f3ebd9;
+  border: 3px solid var(--graphite-dark);
+  border-radius: 8px 12px 10px 6px;
+  z-index: -1;
+  transform: rotate(0.9deg);
+}
+
+.notebook-wrapper::after {
+  inset: 8px -5px -10px 5px;
+  background: #e9dfc8;
+  transform: rotate(-0.7deg);
+  z-index: -2;
+}
+
+/* Masitas curiosas asomándose por los bordes de la libreta */
+.peeking-masita {
+  position: absolute;
+  pointer-events: none;
+  z-index: 15;
+  filter: drop-shadow(2px 2px 0 rgba(34, 30, 27, 0.2));
+}
+
+.peeking-masita.peek-top {
+  width: 46px;
+  top: -36px;
+  left: 43%;
+  transform: rotate(-3deg);
+}
+
+.peeking-masita.peek-left {
+  width: 48px;
+  top: 22%;
+  left: -22px;
+  transform: rotate(-18deg);
+}
+
+.peeking-masita.peek-bottom-right {
+  width: 52px;
+  bottom: 12px;
+  right: -18px;
+  transform: scaleX(-1) rotate(-12deg);
+}
+
+/* Anillas de espiral superiores */
+.notebook-rings {
+  position: absolute;
+  top: -15px;
+  left: 16px;
+  right: 16px;
+  height: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.ring-loop {
+  width: 16px;
+  height: 28px;
+  position: relative;
+}
+
+.ring-loop::before,
+.ring-loop::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 6px;
+  height: 24px;
+  border: 2.5px solid var(--graphite-dark);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #ffffff 0%, #d8d2c5 50%, #3a342f 100%);
+}
+
+.ring-loop::before {
+  left: 0;
+  transform: rotate(-4deg);
+}
+
+.ring-loop::after {
+  right: 0;
+  transform: rotate(3deg);
+}
+
+.ring-hole {
+  position: absolute;
+  bottom: -3px;
+  left: 2px;
+  width: 12px;
+  height: 9px;
+  background: #3a342f;
+  border-radius: 50%;
+}
+
+/* Superficie interior de la hoja de libreta */
+.notebook-page {
+  position: relative;
+  flex: 1;
+  background-color: var(--paper-bg);
+  background-image:
+    linear-gradient(to right, rgba(74, 67, 61, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(74, 67, 61, 0.06) 1px, transparent 1px);
+  background-size: 20px 20px;
+  border: 3.5px solid var(--graphite-dark);
+  border-radius: 8px 10px 8px 10px;
+  box-shadow: var(--shadow-sketch-lg);
+  padding: 20px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  overflow: hidden;
+}
+
+/* Sombreado de grafito en el marco interior como en el boceto original */
+.notebook-page::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1.5px solid rgba(34, 30, 27, 0.25);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   1. MARCADOR SUPERIOR (CARRUSEL DE JUGADORES ESTILO NOTAS ADHESIVAS)
+   ========================================================================== */
+.scoreboard-frame {
+  position: relative;
+  background: repeating-linear-gradient(
+    -35deg,
+    rgba(74, 67, 61, 0.07),
+    rgba(74, 67, 61, 0.07) 3px,
+    rgba(253, 250, 241, 0.5) 3px,
+    rgba(253, 250, 241, 0.5) 7px
+  );
+  border: 3px solid var(--graphite-dark);
+  border-radius: 10px 8px 12px 9px;
+  padding: 8px 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.carousel-nav-btn {
+  width: 28px;
+  height: 76px;
+  background: var(--paper-bg);
+  border: 2.5px solid var(--graphite-dark);
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--graphite-dark);
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0 var(--graphite-dark);
+  padding: 0;
+}
+
+.carousel-nav-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.players-carousel {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 4px 4px 12px;
+  scrollbar-width: none;
+}
+
+.players-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.player-card {
+  position: relative;
+  min-width: 84px;
+  flex: 1 0 84px;
+  background: var(--paper-bg);
+  border: 2.5px solid var(--graphite-dark);
+  border-radius: 6px 8px 5px 7px;
+  padding: 6px 6px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 2px 3px 0px rgba(34, 30, 27, 0.85);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+
+.player-card.is-active {
+  background: var(--marker-yellow);
+  border-width: 3px;
+  transform: scale(1.06) translateY(-2px);
+  box-shadow: 3px 5px 0px var(--graphite-dark);
+  z-index: 4;
+}
+
+.player-card.is-active::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 2px dashed var(--graphite-dark);
+  border-radius: 9px;
+  pointer-events: none;
+}
+
+.player-avatar-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--graphite-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 2px;
+  background: var(--paper-bg);
+}
+
+.player-avatar-box img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.player-name {
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-score-main {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.player-live-formula {
+  font-size: 0.68rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1.5px solid var(--graphite-dark);
+  border-radius: 6px;
+  padding: 1px 4px;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.active-turn-badge {
+  position: absolute;
+  bottom: -11px;
+  right: -4px;
+  background: var(--graphite-dark);
+  color: var(--marker-yellow);
+  font-size: 0.62rem;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
+  transform: rotate(-3deg);
+}
+
+.active-mini-masita {
+  position: absolute;
+  bottom: -14px;
+  left: -6px;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Barra de meta debajo del marcador */
+.target-meta-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--graphite-mid);
+}
+
+.target-pill {
+  background: var(--paper-warm);
+  border: 2px solid var(--graphite-dark);
+  border-radius: 999px;
+  padding: 1px 9px;
+  color: var(--graphite-dark);
+  font-weight: 900;
+  box-shadow: 1px 2px 0 var(--graphite-dark);
+}
+
+/* ==========================================================================
+   2. ZONA CENTRAL: MEDIDOR DE CODICIA Y ESCENARIO INTERACTIVO (MASITA + DADO 3D)
+   ========================================================================== */
+.arena-frame {
+  position: relative;
+  flex: 1;
+  min-height: 250px;
+  background: var(--paper-bg);
+  border: 3px solid var(--graphite-dark);
+  border-radius: 12px 10px 14px 10px;
+  padding: 12px 12px 10px;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  align-items: center;
+  gap: 8px;
+  box-shadow: inset 0 0 0 2px rgba(34, 30, 27, 0.06);
+}
+
+/* Columna Izquierda: Contador "LLEVAS: XX PTS" + Barra de Codicia en Cuña */
+.greed-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  z-index: 3;
+}
+
+.turn-label-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  margin: 0;
+  color: var(--graphite-dark);
+}
+
+.turn-points-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding-bottom: 6px;
+}
+
+/* Rayitas de énfasis dibujadas a la izquierda del número */
+.turn-points-rays {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-right: 2px;
+}
+
+.turn-points-rays span {
+  display: block;
+  width: 11px;
+  height: 3px;
+  background: var(--graphite-dark);
+  border-radius: 2px;
+}
+
+.turn-points-rays span:nth-child(1) { transform: rotate(22deg); }
+.turn-points-rays span:nth-child(2) { transform: rotate(0deg); width: 13px; }
+.turn-points-rays span:nth-child(3) { transform: rotate(-22deg); }
+
+.turn-points-number {
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  font-weight: 900;
+  line-height: 0.95;
+  color: var(--graphite-dark);
+  text-shadow: 2px 2px 0px var(--marker-yellow);
+}
+
+.turn-points-unit {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 900;
+}
+
+/* Doble subrayado de grafito como en la lámina de referencia */
+.turn-points-wrapper::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  border-top: 3px solid var(--graphite-dark);
+  border-bottom: 2.5px solid var(--graphite-dark);
+  transform: rotate(-2.5deg);
+}
+
+/* Medidor de Codicia en Cuña Ascendente (6 segmentos de racha) */
+.greed-wedge-container {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.greed-wedge-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--graphite-mid);
+  margin-bottom: 3px;
+}
+
+.greed-wedge-bar {
+  width: 100%;
+  height: 34px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  align-items: end;
+  gap: 3px;
+  padding: 3px;
+  border-bottom: 3px solid var(--graphite-dark);
+}
+
+.greed-segment {
+  border: 2.5px solid var(--graphite-dark);
+  border-radius: 3px 3px 1px 1px;
+  background: var(--paper-warm);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.greed-segment:nth-child(1) { height: 32%; }
+.greed-segment:nth-child(2) { height: 45%; }
+.greed-segment:nth-child(3) { height: 58%; }
+.greed-segment:nth-child(4) { height: 72%; }
+.greed-segment:nth-child(5) { height: 86%; }
+.greed-segment:nth-child(6) { height: 100%; }
+
+.greed-segment.is-filled {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--graphite-dark),
+    var(--graphite-dark) 2px,
+    var(--marker-yellow) 2px,
+    var(--marker-yellow) 5px
+  );
+}
+
+.greed-segment.is-danger {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--accent-danger),
+    var(--accent-danger) 3px,
+    #ff9f1c 3px,
+    #ff9f1c 6px
+  );
+}
+
+.greed-question-text {
+  margin: 4px 0 0;
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: var(--graphite-dark);
+  letter-spacing: 0.01em;
+}
+
+.greed-question-text.is-high-risk {
+  color: var(--accent-danger);
+}
+
+/* Columna Derecha: Escenario con Masita Anfitriona + Dado 3D */
+.stage-interactive {
+  position: relative;
+  height: 225px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Llamada "¡TIRAR!" encima de la Masita Anfitriona */
+.stage-shout-label {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--graphite-dark);
+  background: var(--marker-yellow);
+  border: 2px solid var(--graphite-dark);
+  border-radius: 10px;
+  padding: 2px 8px;
+  transform: rotate(6deg);
+  box-shadow: 2px 2px 0 var(--graphite-dark);
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* Contenedor del Dado 3D (a la izquierda-centro del escenario o centro-derecha) */
+.dice-stage-slot {
+  position: absolute;
+  left: 0px;
+  top: 14px;
+  width: 104px;
+  height: 132px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.dice-scene {
+  width: 92px;
+  height: 92px;
+  perspective: 550px;
+  position: relative;
+}
+
+.dice-cube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(-12deg) rotateY(18deg);
+  transition: transform 0.72s cubic-bezier(0.22, 1.28, 0.36, 1);
+}
+
+.dice-face {
+  position: absolute;
+  width: 92px;
+  height: 92px;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  background-color: var(--paper-bg);
+  box-shadow: inset 0 0 0 2px var(--graphite-dark);
+  overflow: hidden;
+}
+
+.dice-face img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Posicionamiento exacto de las 6 caras del cubo (Z = 46px) */
+.dice-face.face-1 { transform: rotateY(0deg) translateZ(46px); }
+.dice-face.face-2 { transform: rotateY(180deg) translateZ(46px); }
+.dice-face.face-3 { transform: rotateY(90deg) translateZ(46px); }
+.dice-face.face-4 { transform: rotateY(-90deg) translateZ(46px); }
+.dice-face.face-5 { transform: rotateX(90deg) translateZ(46px); }
+.dice-face.face-6 { transform: rotateX(-90deg) translateZ(46px); }
+
+/* Sombra de grafito debajo del dado 3D */
+.dice-shadow {
+  width: 78px;
+  height: 16px;
+  margin-top: 18px;
+  background: repeating-linear-gradient(
+    -25deg,
+    rgba(34, 30, 27, 0.45),
+    rgba(34, 30, 27, 0.45) 2px,
+    rgba(34, 30, 27, 0.18) 2px,
+    rgba(34, 30, 27, 0.18) 4px
+  );
+  border-radius: 50%;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+/* Contenedor de la Masita Anfitriona */
+.host-masita-slot {
+  position: absolute;
+  right: -6px;
+  bottom: 0px;
+  width: 112px;
+  height: 130px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.host-masita-img {
+  width: 104px;
+  height: 124px;
+  object-fit: contain;
+  transform-origin: bottom center;
+}
+
+/* Efectos auxiliares de la Masita Anfitriona (Polvo de carrera y Sudor) */
+.host-fx-dust {
+  position: absolute;
+  right: -12px;
+  bottom: 4px;
+  width: 74px;
+  height: auto;
+  opacity: 0;
+  pointer-events: none;
+  transform: scaleX(-1);
+}
+
+.host-fx-sweat {
+  position: absolute;
+  top: -10px;
+  right: 4px;
+  width: 52px;
+  height: auto;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   3. ZONA INFERIOR: CONTROLES TÁCTILES ESTILO NOTAS CON ESQUINA DOBLADA
+   ========================================================================== */
+.controls-footer {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.12fr 1fr;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+/* Flecha manuscrita que apunta del medidor al botón TIRAR DADO */
+.sketch-curved-arrow {
+  position: absolute;
+  top: -26px;
+  left: 34%;
+  width: 34px;
+  height: 36px;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.action-note-btn {
+  position: relative;
+  min-height: 104px;
+  background: var(--paper-bg);
+  border: 3.5px solid var(--graphite-dark);
+  border-radius: 8px 10px 14px 8px;
+  box-shadow: var(--shadow-sketch);
+  padding: 10px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  color: var(--graphite-dark);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
+  overflow: hidden;
+}
+
+/* Esquina de papel doblada como en la lámina 06 */
+.action-note-btn::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, var(--paper-warm) 48%, #cbbba0 50%, var(--graphite-dark) 52%);
+  border-top: 2.5px solid var(--graphite-dark);
+  border-left: 2.5px solid var(--graphite-dark);
+  border-top-left-radius: 4px;
+}
+
+.action-note-btn.btn-roll {
+  background: var(--marker-yellow);
+  transform: rotate(-1deg);
+}
+
+.action-note-btn.btn-roll:hover:not(:disabled) {
+  background: var(--marker-yellow-bright);
+  transform: translateY(-2px) rotate(-0.5deg);
+}
+
+.action-note-btn.btn-bank {
+  background: var(--paper-bg);
+  transform: rotate(0.8deg);
+}
+
+.action-note-btn.btn-bank.can-bank {
+  background: #e6f9ed;
+}
+
+.action-note-btn:active:not(:disabled) {
+  transform: translate(3px, 4px) rotate(0deg);
+  box-shadow: 1px 1px 0px var(--graphite-dark);
+}
+
+.action-note-btn:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+  filter: grayscale(0.35);
+}
+
+.btn-title-text {
+  font-size: 1.55rem;
+  font-weight: 900;
+  line-height: 1.02;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.btn-sub-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-hand);
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+.btn-bag-icon {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+.bank-points-pill {
+  background: var(--marker-yellow);
+  border: 2px solid var(--graphite-dark);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+/* ==========================================================================
+   4. OVERLAYS: ¡GAROZOOO! (ESTAMPIDA), ¡WIN! (VICTORIA) Y MODALES
+   ========================================================================== */
+.garozo-stampede-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 12vh;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  background: radial-gradient(circle, rgba(253, 250, 241, 0.25) 0%, rgba(34, 30, 27, 0.35) 100%);
+  transition: opacity 0.18s ease;
+}
+
+.garozo-stampede-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.garozo-banner-img {
+  width: min(92vw, 440px);
+  height: auto;
+  filter: drop-shadow(4px 6px 0px var(--graphite-dark));
+  z-index: 65;
+}
+
+.garozo-lost-subtitle {
+  margin-top: 6px;
+  background: var(--accent-danger);
+  color: #ffffff;
+  border: 3px solid var(--graphite-dark);
+  border-radius: 12px;
+  padding: 6px 16px;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 900;
+  box-shadow: var(--shadow-sketch);
+  z-index: 65;
+  transform: rotate(-2deg);
+}
+
+.stampede-lane {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 62;
+}
+
+.stampede-runner {
+  position: absolute;
+  width: 115px;
+  height: 115px;
+  object-fit: contain;
+  will-change: transform;
+}
+
+/* Overlay de Victoria (WIN!) */
+.win-overlay,
+.setup-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(34, 30, 27, 0.68);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.22s ease;
+}
+
+.win-overlay.is-visible,
+.setup-modal-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sketch-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  max-height: 92dvh;
+  overflow-y: auto;
+  background: var(--paper-bg);
+  border: 4px solid var(--graphite-dark);
+  border-radius: 14px 18px 12px 16px;
+  box-shadow: 8px 10px 0px var(--graphite-dark);
+  padding: 18px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.win-banner-img {
+  width: min(76vw, 290px);
+  height: auto;
+}
+
+/* Escena de desfile: Masita de la trompeta + Cartel del Ganador + Ronda de Masitas */
+.win-parade-stage {
+  position: relative;
+  width: 100%;
+  min-height: 175px;
+  background: var(--paper-warm);
+  border: 3px solid var(--graphite-dark);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.winner-wooden-sign {
+  background: #fff9e6;
+  border: 3.5px solid var(--graphite-dark);
+  border-radius: 8px;
+  padding: 8px 18px;
+  text-align: center;
+  box-shadow: 3px 4px 0 var(--graphite-dark);
+  z-index: 4;
+  transform: rotate(-1.5deg);
+}
+
+.winner-sign-label {
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: var(--graphite-mid);
+  text-transform: uppercase;
+}
+
+.winner-sign-name {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: var(--graphite-dark);
+  background: var(--marker-yellow);
+  padding: 0 8px;
+  border-radius: 6px;
+}
+
+.winner-sign-score {
+  font-size: 0.95rem;
+  font-weight: 900;
+  margin-top: 2px;
+}
+
+.win-characters-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  z-index: 4;
+}
+
+.win-trumpet-masita {
+  width: 86px;
+  height: 86px;
+  object-fit: contain;
+}
+
+.win-happy-dancer {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+/* Tabla de posiciones final */
+.standings-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.standing-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--paper-warm);
+  border: 2px solid var(--graphite-dark);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-weight: 800;
+}
+
+.standing-row.is-first {
+  background: var(--marker-yellow);
+  border-width: 2.5px;
+}
+
+.modal-actions-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.sketch-primary-btn,
+.sketch-secondary-btn {
+  padding: 12px 14px;
+  border: 3px solid var(--graphite-dark);
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: var(--shadow-sketch-sm);
+}
+
+.sketch-primary-btn {
+  background: var(--marker-yellow);
+  color: var(--graphite-dark);
+}
+
+.sketch-secondary-btn {
+  background: var(--paper-bg);
+  color: var(--graphite-dark);
+}
+
+/* Configuración de Jugadores y Meta */
+.setup-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setup-section-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 900;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.target-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.target-preset-btn {
+  background: var(--paper-warm);
+  border: 2.5px solid var(--graphite-dark);
+  border-radius: 8px;
+  padding: 7px 4px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.target-preset-btn.is-selected {
+  background: var(--marker-yellow);
+  box-shadow: 2px 2px 0 var(--graphite-dark);
+  transform: translateY(-1px);
+}
+
+.custom-target-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.sketch-input {
+  flex: 1;
+  background: #ffffff;
+  border: 2.5px solid var(--graphite-dark);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-family: var(--font-hand);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--graphite-dark);
+  user-select: text;
+}
+
+.players-setup-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.player-setup-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.player-color-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--graphite-dark);
+  flex-shrink: 0;
+}
+
+.remove-player-btn {
+  background: #ffd6d6;
+  border: 2px solid var(--graphite-dark);
+  border-radius: 8px;
+  width: 32px;
+  height: 34px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* Partículas flotantes de puntos hacia el marcador */
+.floating-score-particle {
+  position: fixed;
+  z-index: 90;
+  pointer-events: none;
+  background: var(--marker-yellow);
+  border: 2.5px solid var(--graphite-dark);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 900;
+  box-shadow: 2px 3px 0 var(--graphite-dark);
+  transition: transform 0.65s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.65s ease;
+}
+
+/* Responsividad Móvil y Pantallas Pequeñas */
+@media (max-width: 420px) {
+  .arena-frame {
+    grid-template-columns: 1fr 1fr;
+    padding: 10px 8px;
+  }
+  .turn-points-number {
+    font-size: 2.65rem;
+  }
+  .btn-title-text {
+    font-size: 1.32rem;
+  }
+  .peeking-masita.peek-left,
+  .peeking-masita.peek-bottom-right {
+    display: none;
+  }
+}
