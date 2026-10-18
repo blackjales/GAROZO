@@ -2,175 +2,487 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>GAROZO! Party Game 🎲</title>
-  
-  <!-- Estilos del Sketchbook Vivo -->
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/animations.css">
-
-  <!-- Favicon e Icono de App -->
-  <link rel="icon" type="image/png" href="assets/sprites/masita_idle.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head>
 <body>
+  <main id="appShell" class="app-shell">
 
-  <!-- Contenedor Principal de la Libreta de Dibujo -->
-  <main class="sketchbook-container" id="sketchbookApp">
-    
-    <!-- Argollas de espiral en la parte superior -->
-    <header class="spiral-rings" aria-hidden="true">
-      <div class="spiral-ring"></div>
-      <div class="spiral-ring"></div>
-      <div class="spiral-ring"></div>
-      <div class="spiral-ring"></div>
-      <div class="spiral-ring"></div>
-      <div class="spiral-ring"></div>
-      <div class="spiral-ring"></div>
-      <div class="spiral-ring"></div>
-    </header>
+    <!-- ====================================================================
+         PANTALLA 1: HUB PRINCIPAL
+         ==================================================================== -->
+    <section id="screenHub" class="flow-screen is-active" aria-label="Menú principal de GAROZO!">
+      <div class="sketch-card-sheet hub-sheet">
+        <!-- Barra discreta superior: Ajustes y Sonido -->
+        <header class="hub-top-bar">
+          <button id="btnHubSettings" type="button" class="hub-icon-btn" aria-label="Ajustes del juego" title="Ajustes">
+            <svg viewBox="0 0 32 32" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="16" cy="16" r="5"></circle>
+              <path d="M16 3v3M16 26v3M3 16h3M26 16h3M6.8 6.8l2.2 2.2M23 23l2.2 2.2M25.2 6.8L23 9M9 23l-2.2 2.2"></path>
+            </svg>
+          </button>
+          <button id="btnHubAudio" type="button" class="hub-icon-btn" aria-label="Alternar sonido" title="Sonido">
+            <span id="hubAudioIconLabel" aria-hidden="true">🔊</span>
+          </button>
+        </header>
 
-    <!-- Barra de Herramientas Superior -->
-    <nav class="top-bar">
-      <div class="logo-wrap" id="btnLogo" title="Acerca del juego">
-        <img src="assets/sprites/logo_garozo.png" class="logo-img boil-living" alt="GAROZO! party game">
-      </div>
-
-      <div class="top-actions">
-        <div class="target-badge" id="targetBadge" title="Meta de puntos para ganar">
-          🎯 <span id="targetScoreDisplay">100</span> pts
+        <!-- Logotipo artesanal con rayos y subrayado amarillo -->
+        <div class="hub-brand-block">
+          <div class="hub-rays-deco" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <h1 class="hub-main-logo">GAROZO!</h1>
+          <div class="yellow-brush-underline"></div>
+          <p class="hub-sub-logo">PARTY GAME</p>
         </div>
-        <button class="icon-btn" id="btnMute" title="Silenciar / Activar Sonido" aria-label="Audio">🔊</button>
-        <button class="icon-btn" id="btnSettings" title="Configurar Partida" aria-label="Ajustes">⚙️</button>
-      </div>
-    </nav>
 
-    <!-- Carrusel Superior de Jugadores (Tarjetas de papel) -->
-    <section class="players-carousel-wrapper" aria-label="Marcador de jugadores">
-      <div class="players-carousel" id="playersCarousel">
-        <!-- Renderizado dinámico de tarjetas de jugador -->
+        <!-- Ilustración central: Masita abrazando el dado -->
+        <div class="hub-hero-figure">
+          <img id="hubHeroImg" class="hub-hero-img" src="assets/sprites/masita_hub_dice.png" alt="Masita sosteniendo un dado ilustrado a mano">
+        </div>
+
+        <!-- Frase principal -->
+        <p class="hub-tagline">
+          Tira, suma, intenta…<br>
+          <span class="hub-tagline-highlight">¡y no saques 1!</span>
+        </p>
+
+        <!-- Acciones del Hub: Botón principal y único acceso secundario -->
+        <div class="hub-actions-stack">
+          <button id="btnHubPlay" type="button" class="hub-cta-btn hub-cta-primary">
+            <span class="hub-cta-icon" aria-hidden="true">
+              <svg viewBox="0 0 44 44" width="38" height="38" fill="none">
+                <polygon points="22,4 39,12 39,32 22,40 5,32 5,12" fill="#fdfaf1" stroke="#221e1b" stroke-width="3" stroke-linejoin="round"/>
+                <polyline points="5,12 22,20 39,12" stroke="#221e1b" stroke-width="2.6" stroke-linejoin="round"/>
+                <line x1="22" y1="20" x2="22" y2="40" stroke="#221e1b" stroke-width="2.6"/>
+                <circle cx="22" cy="12" r="2.3" fill="#221e1b"/>
+                <circle cx="12" cy="23" r="2.1" fill="#221e1b"/>
+                <circle cx="16" cy="29" r="2.1" fill="#221e1b"/>
+                <circle cx="28" cy="22" r="2.1" fill="#221e1b"/>
+                <circle cx="33" cy="27" r="2.1" fill="#221e1b"/>
+                <circle cx="28" cy="32" r="2.1" fill="#221e1b"/>
+              </svg>
+            </span>
+            <span class="hub-cta-copy">
+              <strong class="hub-cta-title">JUGAR JUNTOS</strong>
+              <small class="hub-cta-sub">En este dispositivo · 2–8 jugadores</small>
+            </span>
+            <span class="hub-cta-arrow" aria-hidden="true">›</span>
+          </button>
+
+          <button id="btnHubRules" type="button" class="hub-cta-btn hub-cta-secondary">
+            <span class="hub-cta-icon" aria-hidden="true">
+              <svg viewBox="0 0 44 44" width="36" height="36" fill="none">
+                <path d="M6 11 C13 9, 19 11, 22 14 C25 11, 31 9, 38 11 L38 34 C31 32, 25 34, 22 37 C19 34, 13 32, 6 34 Z" fill="#fdfaf1" stroke="#221e1b" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="22" y1="14" x2="22" y2="37" stroke="#221e1b" stroke-width="2.6"/>
+              </svg>
+            </span>
+            <span class="hub-cta-copy">
+              <strong class="hub-cta-title">¿CÓMO SE JUEGA?</strong>
+              <small class="hub-cta-sub">Aprende las reglas en 30 segundos</small>
+            </span>
+            <span class="hub-cta-arrow" aria-hidden="true">›</span>
+          </button>
+        </div>
       </div>
     </section>
 
-    <!-- Zona Central: Medidor de Codicia y Escenario del Dado -->
-    <section class="center-zone">
-      
-      <!-- El Medidor de Codicia / Puntos en Riesgo -->
-      <div class="greed-meter-container" id="greedMeter">
-        <div class="turn-points-display">
-          <div class="turn-points-label">PUNTOS EN RIESGO</div>
-          <div class="turn-points-value" id="turnPointsValue">0</div>
-        </div>
-        <div class="tension-bar-wrap">
-          <div class="tension-bar-fill" id="tensionBarFill"></div>
-        </div>
+    <!-- ====================================================================
+         PANTALLA 2: ¿CÓMO SE JUEGA? (REGLAS ILUSTRADAS)
+         ==================================================================== -->
+    <section id="screenRules" class="flow-screen" aria-label="Cómo se juega">
+      <div class="sketch-card-sheet rules-sheet">
+        <header class="flow-header">
+          <button id="btnRulesBackTop" type="button" class="flow-back-btn" aria-label="Volver al inicio">←</button>
+          <div class="flow-title-wrap">
+            <h2 class="flow-title">¿Cómo se juega?</h2>
+            <div class="yellow-brush-underline"></div>
+          </div>
+        </header>
+
+        <ol class="rules-list">
+          <li class="rule-item">
+            <span class="rule-badge">1</span>
+            <div class="rule-figure">
+              <img src="assets/sprites/dice/face_5.png" alt="Dado ilustrado">
+            </div>
+            <div class="rule-text">
+              <h3>Tira el dado</h3>
+              <p>Cada resultado del 2 al 6 suma puntos provisionales al turno. Si sale 1, se pierden los puntos provisionales.</p>
+            </div>
+          </li>
+
+          <li class="rule-item">
+            <span class="rule-badge">2</span>
+            <div class="rule-figure">
+              <img src="assets/sprites/masita_run.png" alt="Masita tirando el dado">
+            </div>
+            <div class="rule-text">
+              <h3>Puedes seguir tirando</h3>
+              <p>El jugador puede realizar tantas tiradas como quiera durante su turno acumulando puntos con resultados del 2 al 6.</p>
+            </div>
+          </li>
+
+          <li class="rule-item">
+            <span class="rule-badge">3</span>
+            <div class="rule-figure">
+              <img src="assets/sprites/masita_point.png" alt="Masita plantándose">
+            </div>
+            <div class="rule-text">
+              <h3>Plántate</h3>
+              <p>Puede guardar los puntos provisionales en su marcador y terminar su turno cuando decida asegurarse.</p>
+            </div>
+          </li>
+
+          <li class="rule-item">
+            <span class="rule-badge">4</span>
+            <div class="rule-figure rule-figure-garozo">
+              <img src="assets/sprites/panic_scream.png" alt="Masita asustada por sacar 1">
+              <span class="rule-bubble-one">1</span>
+            </div>
+            <div class="rule-text">
+              <h3>Si sale 1… ¡GAROZOOO!</h3>
+              <p>Pierde todos los puntos provisionales acumulados durante ese turno. Conserva los puntos guardados y el turno pasa automáticamente al siguiente jugador.</p>
+            </div>
+          </li>
+
+          <li class="rule-item">
+            <span class="rule-badge">5</span>
+            <div class="rule-figure rule-figure-crown">
+              <span class="rule-crown-icon" aria-hidden="true">👑</span>
+              <img src="assets/sprites/masita_happy.png" alt="Masita ganadora">
+            </div>
+            <div class="rule-text">
+              <h3>Llega a la meta</h3>
+              <p>El jugador gana inmediatamente cuando sus puntos guardados más los puntos provisionales alcanzan o superan la meta. ¡No necesita plantarse!</p>
+            </div>
+          </li>
+        </ol>
+
+        <footer class="flow-footer-stack">
+          <button id="btnRulesPlay" type="button" class="flow-btn flow-btn-yellow">
+            🎲 JUGAR JUNTOS ›
+          </button>
+          <button id="btnRulesBackBottom" type="button" class="flow-btn flow-btn-dark">
+            ← Volver al inicio
+          </button>
+        </footer>
       </div>
+    </section>
 
-      <!-- Escenario: Masita Anfitriona + Dado 3D -->
-      <div class="stage-arena" id="stageArena">
-        
-        <!-- Masita Anfitriona -->
-        <div class="host-masita-wrap masita-idle-anim" id="hostMasitaWrap">
-          <img src="assets/sprites/masita_idle.png" class="host-masita-img boil-living" id="hostMasitaImg" alt="Masita Anfitriona">
-          <img src="assets/sprites/fx_dust.png" class="host-dust" id="hostDust" alt="Polvo">
-          <img src="assets/sprites/fx_sweat.png" class="host-sweat" id="hostSweat" alt="Sudor">
+    <!-- ====================================================================
+         PANTALLA 3: CONFIGURACIÓN DE LA PARTIDA
+         ==================================================================== -->
+    <section id="screenSetup" class="flow-screen" aria-label="Configura tu partida">
+      <div class="sketch-card-sheet setup-sheet">
+        <header class="flow-header">
+          <button id="btnSetupBack" type="button" class="flow-back-btn" aria-label="Volver">←</button>
+          <div class="flow-title-wrap">
+            <h2 class="flow-title">Configura tu partida</h2>
+            <div class="yellow-brush-underline"></div>
+          </div>
+        </header>
+
+        <!-- A. META DE PUNTOS -->
+        <div class="setup-block">
+          <div class="setup-block-header">
+            <span class="rule-badge">1</span>
+            <div class="setup-block-title-group">
+              <h3 class="setup-block-title">META DE PUNTOS</h3>
+              <div class="yellow-brush-underline small-brush"></div>
+            </div>
+            <span class="setup-mini-die" aria-hidden="true">🎲</span>
+          </div>
+
+          <!-- Selector [-] 100 [+] -->
+          <div class="target-stepper-row">
+            <button id="btnTargetMinus" type="button" class="stepper-btn" aria-label="Disminuir meta de puntos">−</button>
+            <output id="setupTargetDisplay" class="target-big-value" aria-live="polite">100</output>
+            <button id="btnTargetPlus" type="button" class="stepper-btn" aria-label="Aumentar meta de puntos">+</button>
+          </div>
+
+          <!-- Opciones rápidas: 100, 500, 1000, OTRA -->
+          <div class="target-quick-row">
+            <button type="button" class="target-pill-btn is-selected" data-target-preset="100">100</button>
+            <button type="button" class="target-pill-btn" data-target-preset="500">500</button>
+            <button type="button" class="target-pill-btn" data-target-preset="1000">1000</button>
+            <button id="btnPresetCustom" type="button" class="target-pill-btn">Otra</button>
+          </div>
+
+          <!-- Campo de meta personalizada al elegir "Otra" -->
+          <div id="customTargetDrawer" class="custom-target-drawer" hidden>
+            <label for="customTargetInput">Escribe tu meta (10 a 9999 pts):</label>
+            <input id="customTargetInput" type="number" class="sketch-input custom-target-input" min="10" max="9999" step="10" value="100">
+          </div>
         </div>
 
-        <!-- El Cubo 3D en CSS -->
-        <div class="dice-stage-wrap" id="diceStageWrap" title="¡Toca el dado para tirar!">
-          <div class="dice-scene" id="diceScene">
-            <div class="dice-cube" id="diceCube">
-              <div class="dice-face face-1"><img src="assets/sprites/dice/face_1.png" alt="Cara 1"></div>
-              <div class="dice-face face-2"><img src="assets/sprites/dice/face_2.png" alt="Cara 2"></div>
-              <div class="dice-face face-3"><img src="assets/sprites/dice/face_3.png" alt="Cara 3"></div>
-              <div class="dice-face face-4"><img src="assets/sprites/dice/face_4.png" alt="Cara 4"></div>
-              <div class="dice-face face-5"><img src="assets/sprites/dice/face_5.png" alt="Cara 5"></div>
-              <div class="dice-face face-6"><img src="assets/sprites/dice/face_6.png" alt="Cara 6"></div>
+        <hr class="sketch-divider">
+
+        <!-- B. JUGADORES (2 a 8) -->
+        <div class="setup-block setup-players-block">
+          <div class="setup-block-header">
+            <span class="rule-badge">2</span>
+            <div class="setup-block-title-group">
+              <div class="setup-players-title-line">
+                <h3 class="setup-block-title">JUGADORES</h3>
+                <span id="setupPlayerCountBadge" class="player-count-badge">4 / 8</span>
+              </div>
+              <p class="setup-block-sub">Agrega de 2 a 8 jugadores</p>
             </div>
           </div>
-          <div class="dice-shadow" id="diceShadow"></div>
+
+          <div id="playersSetupList" class="players-setup-list" role="list"></div>
+
+          <button id="btnAddPlayer" type="button" class="add-player-dashed-btn">
+            + Agregar jugador
+          </button>
+          <p id="setupPlayersHint" class="setup-validation-hint" aria-live="polite"></p>
         </div>
 
+        <footer class="flow-footer-stack">
+          <button id="btnSetupContinue" type="button" class="flow-btn flow-btn-dark">
+            Continuar <span aria-hidden="true">›</span>
+          </button>
+        </footer>
       </div>
-
-      <!-- Pista visual de atajos en teclado PC -->
-      <div class="desktop-shortcuts-hint">
-        Atajos: <kbd>Espacio</kbd> = Tirar | <kbd>Enter</kbd> = Plantarse
-      </div>
-
     </section>
 
-    <!-- Botones Táctiles Inferiores (Ergonómicos para el pulgar) -->
-    <footer class="bottom-controls">
-      <button class="btn-game btn-bank" id="btnBank" disabled>
-        <img src="assets/sprites/icon_bag.png" class="bag-icon" alt="Saquito">
-        <span>GUARDAR (<span id="bankPointsVal">0</span>)</span>
-      </button>
-
-      <button class="btn-game btn-roll" id="btnRoll">
-        <span>¡TIRAR DADO!</span> 🎲
-      </button>
-    </footer>
-
-    <!-- Overlay de Estampida Caótica «¡GAROZOOO!» -->
-    <div class="garozo-sequence-overlay" id="garozoOverlay"></div>
-
-    <!-- Overlay de Victoria «WIN!» -->
-    <div class="win-overlay" id="winOverlay"></div>
-
-    <!-- Modal de Configuración de Partida -->
-    <div class="modal-overlay" id="setupModal">
-      <div class="modal-card">
-        <h2 class="modal-title">🎲 NUEVA PARTIDA</h2>
-        
-        <!-- Meta de Puntos -->
-        <div class="form-group">
-          <label class="form-label">Meta de Puntos para Ganar:</label>
-          <div class="goal-chips" id="goalChips">
-            <button type="button" class="goal-chip" data-goal="50">50</button>
-            <button type="button" class="goal-chip active" data-goal="100">100</button>
-            <button type="button" class="goal-chip" data-goal="200">200</button>
-            <button type="button" class="goal-chip" data-goal="500">500</button>
-            <button type="button" class="goal-chip" data-goal="1000">1000</button>
+    <!-- ====================================================================
+         PANTALLA 4: PANTALLA DE CONFIRMACIÓN («¡LISTO PARA JUGAR!»)
+         ==================================================================== -->
+    <section id="screenConfirm" class="flow-screen" aria-label="Confirmación de partida">
+      <div class="sketch-card-sheet confirm-sheet">
+        <header class="flow-header">
+          <button id="btnConfirmBackTop" type="button" class="flow-back-btn" aria-label="Volver y editar">←</button>
+          <div class="flow-title-wrap">
+            <h2 class="flow-title">¡Listo para jugar!</h2>
+            <div class="yellow-brush-underline"></div>
           </div>
-          <input type="number" class="input-pencil" id="customGoalInput" value="100" min="10" max="9999" placeholder="Meta personalizada">
+        </header>
+
+        <div class="confirm-hero-wrap">
+          <img class="confirm-hero-img" src="assets/sprites/masita_happy.png" alt="Masita celebrando">
         </div>
 
-        <!-- Jugadores (2 a 8) -->
-        <div class="form-group">
-          <label class="form-label">Jugadores (de 2 a 8):</label>
-          <div class="players-config-list" id="playersConfigList">
-            <!-- Filas de jugadores configurables -->
+        <!-- Tarjeta Resumen -->
+        <div class="confirm-summary-card">
+          <div class="confirm-metrics-grid">
+            <div class="confirm-metric-cell">
+              <span class="confirm-metric-label">Meta de puntos</span>
+              <strong id="confirmTargetValue" class="confirm-metric-number">100</strong>
+            </div>
+            <div class="confirm-metric-divider" aria-hidden="true"></div>
+            <div class="confirm-metric-cell">
+              <span class="confirm-metric-label">Jugadores</span>
+              <strong id="confirmPlayersCount" class="confirm-metric-number">4</strong>
+            </div>
           </div>
-          <button type="button" class="btn-add-p" id="btnAddPlayer">+ Agregar Jugador</button>
+
+          <ul id="confirmPlayersList" class="confirm-players-list"></ul>
         </div>
 
-        <button type="button" class="btn-primary" id="btnStartGame">¡EMPEZAR FIESTA!</button>
+        <footer class="flow-footer-stack">
+          <button id="btnConfirmStart" type="button" class="flow-btn flow-btn-yellow">
+            ▶ Comenzar partida
+          </button>
+          <button id="btnConfirmEdit" type="button" class="flow-btn flow-btn-light">
+            ← Volver y editar
+          </button>
+        </footer>
       </div>
-    </div>
+    </section>
 
-    <!-- Modal de Reglas Rápidas -->
-    <div class="modal-overlay" id="rulesModal">
-      <div class="modal-card">
-        <h2 class="modal-title">📜 CÓMO JUGAR</h2>
-        <ul style="padding-left: 20px; line-height: 1.6; font-size: 0.95rem; margin-bottom: 16px;">
-          <li>🎲 <strong>Tira el dado</strong> tantas veces como quieras en tu turno.</li>
-          <li>✨ <strong>Caras 2 al 6:</strong> Suman puntos a tu pozo en riesgo.</li>
-          <li>⚠️ <strong>Cara 1 («¡GAROZOOO!»):</strong> ¡Pierdes todo lo acumulado en este turno y pasa el turno!</li>
-          <li>💰 <strong>Plantarse (Guardar):</strong> Asegura tus puntos provisionales para siempre en tu marcador.</li>
-          <li>🏆 <strong>Victoria Inmediata:</strong> En cuanto tus puntos acumulados alcancen la meta, ¡Ganas al instante!</li>
-        </ul>
-        <button type="button" class="btn-primary" id="btnCloseRules">¡ENTENDIDO!</button>
+    <!-- ====================================================================
+         PANTALLA 5: TABLERO DE JUEGO ACTIVO (REUTILIZA EL JUEGO EXISTENTE)
+         ==================================================================== -->
+    <section id="screenGame" class="flow-screen" aria-label="Tablero de juego GAROZO!">
+      <!-- Cabecera Superior con Logo y Controles -->
+      <header class="top-brand-bar">
+        <div class="brand-logo-wrap">
+          <button id="btnGameToHub" type="button" class="sketch-icon-btn" title="Ir al menú de inicio">
+            🏠 Inicio
+          </button>
+          <img id="brandLogoImg" class="brand-logo-img boil-effect" src="assets/sprites/logo_garozo.png" alt="GAROZO! party game">
+        </div>
+        <div class="top-utility-btns">
+          <button id="btnOpenSetup" type="button" class="sketch-icon-btn" title="Configurar jugadores y meta">
+            ⚙️ Partida
+          </button>
+          <button id="btnAudioToggle" type="button" class="sketch-icon-btn" title="Activar/Silenciar sonido">
+            🔊 Sonido
+          </button>
+        </div>
+      </header>
+
+      <!-- Libreta de Bocetos con Anillas -->
+      <div class="notebook-wrapper">
+        <img class="peeking-masita peek-top boil-effect" src="assets/sprites/masita_idle.png" alt="Masita">
+        <img class="peeking-masita peek-left boil-effect" src="assets/sprites/masita_point.png" alt="Masita">
+        <img class="peeking-masita peek-bottom-right boil-effect" src="assets/sprites/masita_happy.png" alt="Masita">
+
+        <!-- Anillas metálicas dibujadas -->
+        <div id="notebookRings" class="notebook-rings" aria-hidden="true"></div>
+
+        <!-- Página Principal del Cuaderno -->
+        <div class="notebook-page">
+          <!-- 1. Marcador Superior: Carrusel de Jugadores -->
+          <div>
+            <div class="scoreboard-frame">
+              <button id="carouselPrev" type="button" class="carousel-nav-btn" aria-label="Anterior">&lt;</button>
+              <div id="playersCarousel" class="players-carousel" role="region" aria-label="Marcador de jugadores"></div>
+              <button id="carouselNext" type="button" class="carousel-nav-btn" aria-label="Siguiente">&gt;</button>
+            </div>
+            <div class="target-meta-strip">
+              <span id="turnStatusHint">Turno de Jugador 1</span>
+              <span id="targetScoreLabel" class="target-pill">META: 100 PTS</span>
+            </div>
+          </div>
+
+          <!-- 2. Zona Central: Medidor de Codicia y Escenario (Dado 3D + Masita Anfitriona) -->
+          <div class="arena-frame">
+            <div class="greed-panel">
+              <h2 class="turn-label-title">LLEVAS:</h2>
+              <div class="turn-points-wrapper">
+                <div class="turn-points-rays" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </div>
+                <span id="turnPointsValue" class="turn-points-number">0</span>
+                <span class="turn-points-unit">PTS</span>
+              </div>
+
+              <div class="greed-wedge-container">
+                <div class="greed-wedge-header">
+                  <span>MEDIDOR DE CODICIA</span>
+                  <span id="streakCounterLabel">Sin riesgo aún</span>
+                </div>
+                <div id="greedWedgeBar" class="greed-wedge-bar" aria-label="Nivel de riesgo de racha">
+                  <div class="greed-segment"></div>
+                  <div class="greed-segment"></div>
+                  <div class="greed-segment"></div>
+                  <div class="greed-segment"></div>
+                  <div class="greed-segment"></div>
+                  <div class="greed-segment"></div>
+                </div>
+              </div>
+
+              <p id="greedQuestionText" class="greed-question-text">+ ¿OTRA? o ¿PLANTAS?</p>
+            </div>
+
+            <!-- Escenario Interactivo: Cubo 3D en CSS y Masita Anfitriona -->
+            <div class="stage-interactive">
+              <div id="stageShoutLabel" class="stage-shout-label boil-effect">¡¡TIRAR!!</div>
+
+              <!-- Dado 3D con las 6 caras dibujadas -->
+              <div id="diceStageSlot" class="dice-stage-slot" title="Toca para tirar el dado">
+                <div id="diceScene" class="dice-scene">
+                  <div id="diceCube" class="dice-cube">
+                    <div class="dice-face face-1"><img src="assets/sprites/dice/face_1.png" alt="Cara 1"></div>
+                    <div class="dice-face face-2"><img src="assets/sprites/dice/face_2.png" alt="Cara 2"></div>
+                    <div class="dice-face face-3"><img src="assets/sprites/dice/face_3.png" alt="Cara 3"></div>
+                    <div class="dice-face face-4"><img src="assets/sprites/dice/face_4.png" alt="Cara 4"></div>
+                    <div class="dice-face face-5"><img src="assets/sprites/dice/face_5.png" alt="Cara 5"></div>
+                    <div class="dice-face face-6"><img src="assets/sprites/dice/face_6.png" alt="Cara 6"></div>
+                  </div>
+                </div>
+                <div id="diceShadow" class="dice-shadow"></div>
+              </div>
+
+              <!-- Masita Anfitriona + Efectos de Polvo y Sudor -->
+              <div class="host-masita-slot">
+                <img id="hostFxSweat" class="host-fx-sweat" src="assets/sprites/fx_sweat.png" alt="">
+                <img id="hostMasitaImg" class="host-masita-img state-idle" src="assets/sprites/masita_idle.png" alt="Masita Anfitriona">
+                <img id="hostFxDust" class="host-fx-dust" src="assets/sprites/fx_dust.png" alt="">
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Zona Inferior: Controles Táctiles Mobile-First -->
+          <div class="controls-footer">
+            <svg class="sketch-curved-arrow" viewBox="0 0 60 64" fill="none" aria-hidden="true">
+              <path d="M34 4 C42 22, 36 42, 16 54" stroke="#221e1b" stroke-width="4.5" stroke-linecap="round"/>
+              <path d="M26 55 L12 56 L18 42" stroke="#221e1b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="#221e1b"/>
+            </svg>
+
+            <button id="btnRollDice" type="button" class="action-note-btn btn-roll">
+              <span class="btn-title-text">TIRAR<br>DADO</span>
+              <span class="btn-sub-info">🎲 ¡Arriesgar!</span>
+            </button>
+
+            <button id="btnBankScore" type="button" class="action-note-btn btn-bank" disabled>
+              <span class="btn-title-text">PLANTARSE</span>
+              <div class="btn-sub-info">
+                <img class="btn-bag-icon boil-effect" src="assets/sprites/icon_bag.png" alt="Bolsa">
+                <span id="bankPointsBadge" class="bank-points-pill">0 PTS</span>
+              </div>
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
 
   </main>
 
-  <!-- Scripts del Juego -->
-  <script src="js/state.js"></script>
-  <script src="js/audio.js"></script>
-  <script src="js/animations.js"></script>
-  <script src="js/app.js"></script>
+  <!-- ====================================================================
+       MODAL DISCRETO DE AJUSTES (ACCESIBLE DESDE EL HUB)
+       ==================================================================== -->
+  <div id="hubSettingsModal" class="setup-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+    <div class="sketch-modal-card settings-modal-card">
+      <h3 id="settingsModalTitle" class="flow-title">Ajustes</h3>
+      <div class="settings-options-list">
+        <div class="setting-row">
+          <span>🔊 Efectos de sonido y voz</span>
+          <button id="btnSettingsAudioToggle" type="button" class="sketch-icon-btn">Activado</button>
+        </div>
+        <div class="setting-row">
+          <span>📖 Ver reglas del juego</span>
+          <button id="btnSettingsOpenRules" type="button" class="sketch-icon-btn">Abrir reglas</button>
+        </div>
+      </div>
+      <button id="btnCloseSettingsModal" type="button" class="flow-btn flow-btn-dark">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       SECUENCIA OVERLAY «¡GAROZOOO!» (SACÓ UN 1)
+       ==================================================================== -->
+  <div id="garozoOverlay" class="garozo-stampede-overlay" aria-live="assertive">
+    <img id="garozoBannerImg" class="garozo-banner-img" src="assets/sprites/banner_garozo.png" alt="¡GAROZOOO!">
+    <div id="garozoSubtitle" class="garozo-lost-subtitle">¡SACÓ UN 1! Pierde todo y pasa el turno</div>
+    <div id="stampedeLane" class="stampede-lane"></div>
+  </div>
+
+  <!-- ====================================================================
+       SECUENCIA OVERLAY «WIN!» (VICTORIA)
+       ==================================================================== -->
+  <div id="winOverlay" class="win-overlay" role="dialog" aria-modal="true" aria-labelledby="winnerNameText">
+    <div class="sketch-modal-card">
+      <img class="win-banner-img boil-effect" src="assets/sprites/banner_win.png" alt="WIN!">
+
+      <div id="winParadeStage" class="win-parade-stage">
+        <div class="winner-wooden-sign">
+          <div class="winner-sign-label">¡GANADOR DE LA PARTIDA!</div>
+          <div id="winnerNameText" class="winner-sign-name">Jugador 1</div>
+          <div id="winnerScoreText" class="winner-sign-score">102 PTS</div>
+        </div>
+
+        <div class="win-characters-row">
+          <img class="win-happy-dancer" src="assets/sprites/masita_happy.png" alt="Masita feliz">
+          <img class="win-trumpet-masita" src="assets/sprites/masita_trumpet.png" alt="Masita de la trompeta">
+          <img class="win-happy-dancer" src="assets/sprites/masita_happy.png" alt="Masita feliz">
+        </div>
+      </div>
+
+      <div id="standingsList" class="standings-list"></div>
+
+      <div class="modal-actions-row">
+        <button id="btnRematch" type="button" class="sketch-primary-btn">🔄 ¡REVANCHA!</button>
+        <button id="btnNewSetupFromWin" type="button" class="sketch-secondary-btn">⚙️ NUEVA PARTIDA</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
