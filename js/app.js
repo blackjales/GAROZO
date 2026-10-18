@@ -1,547 +1,328 @@
 /**
- * GAROZO! Party Game — Controlador Principal de Interfaz (js/app.js)
- * Conecta el motor de estado (state.js), el motor de audio (audio.js)
- * y el director de animaciones (animations.js) con el DOM.
+ * js/app.js
+ * Controlador principal de la interfaz DOM y eventos para "GAROZO! party game".
+ * Integra State Machine, Motor de Audio y Animaciones.
  */
 
-import { GarozoStateEngine, GAME_STATES, PLAYER_PALETTES } from './state.js';
-import { GarozoAudioEngine } from './audio.js';
-import { GarozoAnimationDirector } from './animations.js';
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Instanciación de subsistemas
+  const state = new GarozoGameState();
+  const audio = new GarozoAudio();
+  const anim = new GarozoAnimations();
 
-export function initGarozoApp(customAssetsMap = null) {
-  const defaultAssets = {
-    masita_idle: 'assets/sprites/masita_idle.png',
-    masita_run: 'assets/sprites/masita_run.png',
-    masita_point: 'assets/sprites/masita_point.png',
-    panic_dead: 'assets/sprites/panic_dead.png',
-    masita_happy: 'assets/sprites/masita_happy.png',
-    masita_nervous: 'assets/sprites/masita_nervous.png',
-    masita_trumpet: 'assets/sprites/masita_trumpet.png',
-    panic_scream: 'assets/sprites/panic_scream.png',
-    panic_fall: 'assets/sprites/panic_fall.png',
-    panic_crash: 'assets/sprites/panic_crash.png',
-    panic_dizzy: 'assets/sprites/panic_dizzy.png',
-    banner_garozo: 'assets/sprites/banner_garozo.png',
-    banner_win: 'assets/sprites/banner_win.png',
-    logo_garozo: 'assets/sprites/logo_garozo.png',
-    icon_bag: 'assets/sprites/icon_bag.png',
-    fx_dust: 'assets/sprites/fx_dust.png',
-    fx_sweat: 'assets/sprites/fx_sweat.png',
-    face_1: 'assets/sprites/dice/face_1.png',
-    face_2: 'assets/sprites/dice/face_2.png',
-    face_3: 'assets/sprites/dice/face_3.png',
-    face_4: 'assets/sprites/dice/face_4.png',
-    face_5: 'assets/sprites/dice/face_5.png',
-    face_6: 'assets/sprites/dice/face_6.png',
-  };
+  // 2. Elementos DOM
+  const btnRoll = document.getElementById('btnRoll');
+  const btnBank = document.getElementById('btnBank');
+  const diceStageWrap = document.getElementById('diceStageWrap');
+  const bankPointsVal = document.getElementById('bankPointsVal');
+  const turnPointsValue = document.getElementById('turnPointsValue');
+  const tensionBarFill = document.getElementById('tensionBarFill');
+  const playersCarousel = document.getElementById('playersCarousel');
+  const targetScoreDisplay = document.getElementById('targetScoreDisplay');
+  const btnMute = document.getElementById('btnMute');
+  const btnSettings = document.getElementById('btnSettings');
+  const btnLogo = document.getElementById('btnLogo');
+  const setupModal = document.getElementById('setupModal');
+  const rulesModal = document.getElementById('rulesModal');
+  const btnCloseRules = document.getElementById('btnCloseRules');
+  const goalChips = document.getElementById('goalChips');
+  const customGoalInput = document.getElementById('customGoalInput');
+  const playersConfigList = document.getElementById('playersConfigList');
+  const btnAddPlayer = document.getElementById('btnAddPlayer');
+  const btnStartGame = document.getElementById('btnStartGame');
 
-  const assets = customAssetsMap || window.GAROZO_EMBEDDED_ASSETS || defaultAssets;
+  // Nombres simpáticos por defecto para Masitas
+  const masitaNamePool = [
+    'Masita Feliz', 'Masita Pro', 'Masita Glotona', 
+    'Masita Saltarina', 'Masita Dramática', 'Masita Valiente', 
+    'Masita Veloz', 'Masita Suertuda'
+  ];
 
-  const dom = {
-    appShell: document.getElementById('appShell'),
-    btnAudioToggle: document.getElementById('btnAudioToggle'),
-    btnOpenSetup: document.getElementById('btnOpenSetup'),
-    targetScoreLabel: document.getElementById('targetScoreLabel'),
-    turnStatusHint: document.getElementById('turnStatusHint'),
-    carouselPrev: document.getElementById('carouselPrev'),
-    carouselNext: document.getElementById('carouselNext'),
-    playersCarousel: document.getElementById('playersCarousel'),
-    turnPointsEl: document.getElementById('turnPointsValue'),
-    streakCounterLabel: document.getElementById('streakCounterLabel'),
-    greedWedgeBar: document.getElementById('greedWedgeBar'),
-    greedQuestionText: document.getElementById('greedQuestionText'),
-    stageShoutLabel: document.getElementById('stageShoutLabel'),
-    diceStageSlot: document.getElementById('diceStageSlot'),
-    diceScene: document.getElementById('diceScene'),
-    diceCube: document.getElementById('diceCube'),
-    diceShadow: document.getElementById('diceShadow'),
-    hostImg: document.getElementById('hostMasitaImg'),
-    hostDust: document.getElementById('hostFxDust'),
-    hostSweat: document.getElementById('hostFxSweat'),
-    btnRoll: document.getElementById('btnRollDice'),
-    btnBank: document.getElementById('btnBankScore'),
-    bankPointsBadge: document.getElementById('bankPointsBadge'),
+  let configPlayers = ['Masita 1', 'Masita 2', 'Masita 3'];
+  let selectedGoal = 100;
+  let isRollingAction = false;
 
-    // Overlay Garozo
-    garozoOverlay: document.getElementById('garozoOverlay'),
-    garozoBanner: document.getElementById('garozoBannerImg'),
-    garozoSubtitle: document.getElementById('garozoSubtitle'),
-    stampedeLane: document.getElementById('stampedeLane'),
+  // 3. Inicialización de Audio UI
+  function updateAudioButton() {
+    btnMute.innerText = audio.isMuted ? '🔇' : '🔊';
+  }
+  updateAudioButton();
 
-    // Overlay Victoria
-    winOverlay: document.getElementById('winOverlay'),
-    winParadeStage: document.getElementById('winParadeStage'),
-    winnerNameText: document.getElementById('winnerNameText'),
-    winnerScoreText: document.getElementById('winnerScoreText'),
-    standingsList: document.getElementById('standingsList'),
-    btnRematch: document.getElementById('btnRematch'),
-    btnNewSetupFromWin: document.getElementById('btnNewSetupFromWin'),
+  btnMute.addEventListener('click', () => {
+    audio.toggleMute();
+    updateAudioButton();
+  });
 
-    // Modal Configuración
-    setupModal: document.getElementById('setupModal'),
-    playersSetupList: document.getElementById('playersSetupList'),
-    btnAddPlayer: document.getElementById('btnAddPlayer'),
-    customTargetInput: document.getElementById('customTargetInput'),
-    btnStartConfiguredGame: document.getElementById('btnStartConfiguredGame'),
-    btnCloseSetup: document.getElementById('btnCloseSetup'),
-  };
+  // 4. Modal de Configuración y Gestión de Jugadores
+  function renderPlayersConfig() {
+    playersConfigList.innerHTML = '';
+    configPlayers.forEach((name, index) => {
+      const row = document.createElement('div');
+      row.className = 'player-config-row';
+      row.innerHTML = `
+        <span class="player-config-num">#${index + 1}</span>
+        <input type="text" class="input-pencil player-name-input" data-index="${index}" value="${name}" maxlength="18" placeholder="Nombre Masita">
+        ${configPlayers.length > 2 ? `<button type="button" class="btn-remove-p" data-index="${index}" title="Quitar">✕</button>` : ''}
+      `;
+      playersConfigList.appendChild(row);
+    });
 
-  const stateEngine = new GarozoStateEngine();
-  const audioEngine = new GarozoAudioEngine();
-  const animDirector = new GarozoAnimationDirector(dom, assets);
+    // Control de límite máximo (8 jugadores)
+    btnAddPlayer.style.display = configPlayers.length >= 8 ? 'none' : 'block';
 
-  // Estado temporal del formulario de configuración
-  let setupDraftPlayers = ['JUAN', 'ANA', 'MATEO'];
-  let setupDraftTarget = 100;
+    // Inputs listeners
+    playersConfigList.querySelectorAll('.player-name-input').forEach(input => {
+      input.addEventListener('input', (e) => {
+        const idx = parseInt(e.target.dataset.index, 10);
+        configPlayers[idx] = e.target.value;
+      });
+    });
 
-  // Renderizar anillas superiores de la libreta
-  const ringsContainer = document.getElementById('notebookRings');
-  if (ringsContainer && ringsContainer.children.length === 0) {
-    for (let i = 0; i < 11; i++) {
-      const ring = document.createElement('div');
-      ring.className = 'ring-loop';
-      ring.innerHTML = '<span class="ring-hole"></span>';
-      ringsContainer.appendChild(ring);
-    }
+    // Remove buttons
+    playersConfigList.querySelectorAll('.btn-remove-p').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(e.target.dataset.index, 10);
+        if (configPlayers.length > 2) {
+          configPlayers.splice(idx, 1);
+          renderPlayersConfig();
+        }
+      });
+    });
   }
 
-  function syncAudioButtonUI() {
-    if (!dom.btnAudioToggle) return;
-    if (audioEngine.isMuted) {
-      dom.btnAudioToggle.textContent = '🔇 Mudo';
-      dom.btnAudioToggle.classList.add('is-muted');
-    } else {
-      dom.btnAudioToggle.textContent = '🔊 Sonido';
-      dom.btnAudioToggle.classList.remove('is-muted');
+  btnAddPlayer.addEventListener('click', () => {
+    if (configPlayers.length < 8) {
+      const nextNum = configPlayers.length + 1;
+      const randomSuggest = masitaNamePool[nextNum - 1] || `Masita ${nextNum}`;
+      configPlayers.push(randomSuggest);
+      renderPlayersConfig();
     }
-  }
+  });
 
-  /**
-   * Renderiza el carrusel superior de tarjetas de jugadores
-   */
-  function renderScoreboard(snapshot) {
-    if (!dom.playersCarousel) return;
-    dom.playersCarousel.innerHTML = '';
+  // Selector de Meta (Chips + Input)
+  goalChips.querySelectorAll('.goal-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      goalChips.querySelectorAll('.goal-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedGoal = parseInt(chip.dataset.goal, 10);
+      customGoalInput.value = selectedGoal;
+    });
+  });
+
+  customGoalInput.addEventListener('input', (e) => {
+    selectedGoal = parseInt(e.target.value, 10) || 50;
+    goalChips.querySelectorAll('.goal-chip').forEach(c => {
+      c.classList.toggle('active', parseInt(c.dataset.goal, 10) === selectedGoal);
+    });
+  });
+
+  btnStartGame.addEventListener('click', () => {
+    const validNames = configPlayers.map((n, i) => n.trim() || `Masita ${i + 1}`);
+    state.initGame(validNames, selectedGoal);
+    setupModal.classList.remove('active');
+  });
+
+  btnSettings.addEventListener('click', () => {
+    renderPlayersConfig();
+    setupModal.classList.add('active');
+  });
+
+  btnLogo.addEventListener('click', () => {
+    rulesModal.classList.add('active');
+  });
+
+  btnCloseRules.addEventListener('click', () => {
+    rulesModal.classList.remove('active');
+  });
+
+  // 5. Renderizado del Marcador Superior de Jugadores
+  function updatePlayersCarousel() {
+    const snapshot = state.getSnapshot();
+    playersCarousel.innerHTML = '';
 
     snapshot.players.forEach((player, idx) => {
-      const isActive = idx === snapshot.currentPlayerIndex;
+      const isActive = idx === snapshot.activePlayerIndex;
       const card = document.createElement('div');
-      card.className = `player-card ${isActive ? 'is-active boil-effect' : ''}`;
-      card.dataset.playerIndex = String(idx);
+      card.className = `player-card ${isActive ? 'active' : ''}`;
+      card.id = `playerCard_${idx}`;
 
-      if (!isActive) {
-        card.style.backgroundColor = '#fdfaf1';
-      }
-
-      const projected = player.savedScore + (isActive ? snapshot.turnScore : 0);
-      const formulaHtml =
-        isActive && snapshot.turnScore > 0
-          ? `<div class="player-live-formula">${player.savedScore} + ${snapshot.turnScore} = <strong>${projected}</strong></div>`
-          : `<div class="player-live-formula">Meta: ${Math.min(100, Math.round((player.savedScore / snapshot.targetScore) * 100))}%</div>`;
+      const potential = isActive && snapshot.provisionalPoints > 0
+        ? `${player.savedPoints} + ${snapshot.provisionalPoints} = ${player.savedPoints + snapshot.provisionalPoints}`
+        : '';
 
       card.innerHTML = `
-        <div class="player-avatar-box" style="background:${player.palette.tint}">
-          <img src="${assets.masita_idle}" alt="${player.name}">
-        </div>
-        <div class="player-name">${player.name}</div>
-        <div class="player-score-main">${player.savedScore}</div>
-        ${formulaHtml}
-        ${
-          isActive
-            ? `<img class="active-mini-masita" src="${assets.masita_point}" alt="Turno">
-               <span class="active-turn-badge">¡TURNO!</span>`
-            : ''
-        }
+        <img src="assets/sprites/masita_idle.png" class="player-peeking" alt="Turno">
+        <div class="p-name" style="color: ${isActive ? '#2b2724' : '#555'}">${player.name}</div>
+        <div class="p-score">${player.savedPoints}</div>
+        <div class="p-potential">${potential}</div>
       `;
 
-      dom.playersCarousel.appendChild(card);
-
-      if (isActive) {
-        requestAnimationFrame(() => {
-          card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        });
-      }
-    });
-  }
-
-  /**
-   * Actualiza el medidor de codicia, los puntos provisionales y el estado de los botones
-   */
-  function renderArenaAndControls(snapshot, popScore = false) {
-    if (dom.targetScoreLabel) {
-      dom.targetScoreLabel.textContent = `META: ${snapshot.targetScore} PTS`;
-    }
-
-    if (dom.turnStatusHint && snapshot.currentPlayer) {
-      dom.turnStatusHint.textContent = `Turno de ${snapshot.currentPlayer.name}`;
-    }
-
-    if (dom.turnPointsEl) {
-      dom.turnPointsEl.textContent = String(snapshot.turnScore);
-      if (popScore) {
-        dom.turnPointsEl.classList.remove('pop-anim');
-        void dom.turnPointsEl.offsetWidth;
-        dom.turnPointsEl.classList.add('pop-anim');
-      }
-    }
-
-    if (dom.streakCounterLabel) {
-      dom.streakCounterLabel.textContent =
-        snapshot.rollStreak > 0 ? `Racha: ${snapshot.rollStreak}x 🔥` : 'Sin riesgo aún';
-    }
-
-    // Actualizar los 6 segmentos en cuña del medidor de codicia
-    if (dom.greedWedgeBar) {
-      const segments = dom.greedWedgeBar.querySelectorAll('.greed-segment');
-      segments.forEach((seg, idx) => {
-        seg.classList.remove('is-filled', 'is-danger');
-        if (idx < snapshot.rollStreak) {
-          seg.classList.add(snapshot.rollStreak >= 4 ? 'is-danger' : 'is-filled');
+      // Clic para enfocar o ver datos
+      card.addEventListener('click', () => {
+        if (!isActive && state.status === 'PLAYING' && snapshot.provisionalPoints === 0) {
+          // Si no hay tiradas en curso, permitir explorar
         }
       });
-      dom.greedWedgeBar.classList.toggle('high-streak', snapshot.rollStreak >= 3);
+
+      playersCarousel.appendChild(card);
+    });
+
+    targetScoreDisplay.innerText = snapshot.targetScore;
+
+    // Centrar suavemente la tarjeta activa
+    const activeCard = document.getElementById(`playerCard_${snapshot.activePlayerIndex}`);
+    if (activeCard) {
+      activeCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }
+
+  // 6. Actualización del Medidor de Tensión y Botones
+  function updateGreedMeter(provisionalPoints, streak = 0) {
+    turnPointsValue.innerText = provisionalPoints;
+    bankPointsVal.innerText = provisionalPoints;
+
+    // Barra de tensión (crece con la racha de tiradas)
+    const tensionPercent = Math.min(100, streak * 20);
+    tensionBarFill.style.width = `${tensionPercent}%`;
+
+    if (streak >= 3) {
+      tensionBarFill.classList.add('tension-high');
+    } else {
+      tensionBarFill.classList.remove('tension-high');
     }
 
-    if (dom.greedQuestionText) {
-      if (snapshot.turnScore === 0) {
-        dom.greedQuestionText.textContent = '¡Tira el dado para estrenar el turno!';
-        dom.greedQuestionText.classList.remove('is-high-risk');
-      } else if (snapshot.rollStreak >= 3) {
-        dom.greedQuestionText.textContent = '⚠️ ¡Racha alta! ¿OTRA o PLANTAS?';
-        dom.greedQuestionText.classList.add('is-high-risk');
+    // Efecto bump en los números
+    turnPointsValue.classList.add('bump');
+    setTimeout(() => turnPointsValue.classList.remove('bump'), 180);
+
+    // Habilitar / Deshabilitar botón de Plantarse
+    btnBank.disabled = provisionalPoints === 0 || isRollingAction;
+    btnRoll.disabled = isRollingAction;
+  }
+
+  // 7. Acción: Tirar el Dado
+  async function handleRoll() {
+    if (isRollingAction || state.status !== 'PLAYING') return;
+
+    isRollingAction = true;
+    btnRoll.disabled = true;
+    btnBank.disabled = true;
+
+    // 1. Obtener resultado del motor
+    // Pre-calculamos el dado determinista antes de la animación
+    const diceResult = Math.floor(Math.random() * 6) + 1;
+
+    // 2. Coreografía: Masita corre, patea y el dado 3D vuela
+    await anim.playKickAndRoll(
+      diceResult,
+      () => {
+        // Al impacto de la patada
+        audio.playKick();
+      },
+      (finalValue) => {
+        // Al aterrizar el dado en la libreta
+        audio.playDiceBounce(1.0);
+      }
+    );
+
+    // 3. Aplicar resultado en el motor de juego
+    state.rollDice(diceResult);
+    isRollingAction = false;
+  }
+
+  // 8. Acción: Plantarse (Guardar puntos)
+  function handleBank() {
+    if (isRollingAction || state.status !== 'PLAYING' || state.provisionalPoints === 0) return;
+
+    const secured = state.provisionalPoints;
+    const activeIdx = state.activePlayerIndex;
+    const activeCardEl = document.getElementById(`playerCard_${activeIdx}`);
+
+    audio.playBank();
+    anim.setHostPose('happy');
+    anim.flyPointsToPlayer(activeCardEl, secured);
+
+    btnBank.disabled = true;
+    btnRoll.disabled = true;
+
+    // Aplicar guardado en el motor
+    setTimeout(() => {
+      state.bankPoints();
+      state.finishBankSequence();
+    }, 700);
+  }
+
+  // 9. Conexión de Eventos del Motor con UI y Audio
+  state.on('turnChange', ({ player }) => {
+    updatePlayersCarousel();
+    updateGreedMeter(0, 0);
+    anim.setHostPose('idle');
+  });
+
+  state.on('rollResult', (data) => {
+    if (data.isGarozo) {
+      // ¡SACÓ UN 1! (Garozo)
+      updateGreedMeter(0, 0);
+      updatePlayersCarousel();
+
+      audio.playGarozo();
+      anim.playGarozoSequence(() => {
+        state.finishGarozoSequence();
+      });
+    } else {
+      // Puntos sumados (2 al 6)
+      audio.playScoreAdd(data.turnStreak);
+      updateGreedMeter(data.provisionalPoints, data.turnStreak);
+      updatePlayersCarousel();
+
+      if (data.turnStreak >= 3) {
+        anim.setHostPose('nervous');
       } else {
-        dom.greedQuestionText.textContent = '+ ¿OTRA? o ¿PLANTAS?';
-        dom.greedQuestionText.classList.remove('is-high-risk');
+        anim.setHostPose('idle');
       }
     }
-
-    const canAct = snapshot.state === GAME_STATES.PLAYER_TURN;
-    if (dom.btnRoll) {
-      dom.btnRoll.disabled = !canAct;
-    }
-    if (dom.btnBank) {
-      const canBank = canAct && snapshot.turnScore > 0;
-      dom.btnBank.disabled = !canBank;
-      dom.btnBank.classList.toggle('can-bank', canBank);
-    }
-    if (dom.bankPointsBadge) {
-      dom.bankPointsBadge.textContent =
-        snapshot.turnScore > 0 ? `+${snapshot.turnScore} PTS` : '0 PTS';
-    }
-  }
-
-  /**
-   * Suscripciones a los eventos del Motor de Estado
-   */
-  stateEngine.on('onTurnChange', (_payload, snapshot) => {
-    animDirector.updateHostMood(0);
-    if (dom.stageShoutLabel && snapshot.currentPlayer) {
-      dom.stageShoutLabel.textContent = `¡¡VAMOS ${snapshot.currentPlayer.name}!!`;
-    }
-    renderScoreboard(snapshot);
-    renderArenaAndControls(snapshot);
   });
 
-  stateEngine.on('onRoll', ({ value }, snapshot) => {
-    renderArenaAndControls(snapshot);
-    if (dom.stageShoutLabel) {
-      dom.stageShoutLabel.textContent = '¡¡TIRAR!!';
-    }
+  state.on('win', ({ winner }) => {
+    updatePlayersCarousel();
+    audio.playWinFanfare();
 
-    audioEngine.playRunAndKick();
-    audioEngine.playDiceBounce();
-
-    animDirector.playRollSequence(value, () => {
-      stateEngine.resolveRollOutcome();
-      const afterSnap = stateEngine.getSnapshot();
-
-      if (afterSnap.state === GAME_STATES.PLAYER_TURN) {
-        // Sumó entre 2 y 6 puntos sin ganar aún
-        audioEngine.playScorePoints(afterSnap.rollStreak);
-        if (dom.stageShoutLabel) {
-          dom.stageShoutLabel.textContent = `¡+${value} PUNTOS!`;
-        }
-        animDirector.updateHostMood(afterSnap.rollStreak);
-        renderScoreboard(afterSnap);
-        renderArenaAndControls(afterSnap, true);
+    anim.playWinSequence(
+      winner,
+      // Callback Revancha
+      () => {
+        state.rematch();
+      },
+      // Callback Nueva Partida
+      () => {
+        renderPlayersConfig();
+        setupModal.classList.add('active');
       }
-    });
+    );
   });
 
-  stateEngine.on('onGarozo', ({ lostPoints }, snapshot) => {
-    renderScoreboard(snapshot);
-    renderArenaAndControls(snapshot);
-    if (dom.stageShoutLabel) {
-      dom.stageShoutLabel.textContent = '¡¡GAROZOOO!! 😱';
-    }
+  // 10. Listeners de Botones y Toques Táctiles
+  btnRoll.addEventListener('click', handleRoll);
+  btnBank.addEventListener('click', handleBank);
+  diceStageWrap.addEventListener('click', handleRoll);
 
-    audioEngine.playGarozo();
-    animDirector.playGarozoStampede(lostPoints, () => {
-      stateEngine.advanceTurn();
-    });
-  });
-
-  stateEngine.on('onBank', ({ bankedPoints }, snapshot) => {
-    audioEngine.playBank();
-    if (dom.stageShoutLabel) {
-      dom.stageShoutLabel.textContent = `¡GUARDÓ +${bankedPoints}!`;
-    }
-
-    const activeCard = dom.playersCarousel
-      ? dom.playersCarousel.querySelector('.player-card.is-active')
-      : null;
-
-    renderArenaAndControls(snapshot);
-
-    animDirector.playBankSequence(bankedPoints, activeCard, () => {
-      renderScoreboard(stateEngine.getSnapshot());
-      if (stateEngine.state !== GAME_STATES.GAME_OVER) {
-        stateEngine.advanceTurn();
-      }
-    });
-  });
-
-  stateEngine.on('onWin', ({ winner, finalScore, standings }, snapshot) => {
-    renderScoreboard(snapshot);
-    renderArenaAndControls(snapshot);
-    audioEngine.playWinFanfare();
-
-    if (dom.winnerNameText) dom.winnerNameText.textContent = winner.name;
-    if (dom.winnerScoreText) {
-      dom.winnerScoreText.textContent = `${finalScore} PTS (Meta: ${snapshot.targetScore})`;
-    }
-
-    if (dom.standingsList) {
-      dom.standingsList.innerHTML = standings
-        .map(
-          (p, i) => `
-          <div class="standing-row ${i === 0 ? 'is-first' : ''}">
-            <span>${i === 0 ? '🏆' : `#${i + 1}`} ${p.name}</span>
-            <span>${p.savedScore} pts <small>(Garozos: ${p.garozos})</small></span>
-          </div>
-        `
-        )
-        .join('');
-    }
-
-    animDirector.spawnWinConfetti(dom.winParadeStage);
-    if (dom.winOverlay) {
-      dom.winOverlay.classList.add('is-visible');
-    }
-  });
-
-  /**
-   * Acciones de usuario: Tirar dado y Plantarse
-   */
-  function handleRollAction() {
-    if (stateEngine.state !== GAME_STATES.PLAYER_TURN) return;
-    stateEngine.requestRoll();
-  }
-
-  function handleBankAction() {
-    if (stateEngine.state !== GAME_STATES.PLAYER_TURN || stateEngine.turnScore <= 0) return;
-    stateEngine.requestBank();
-  }
-
-  if (dom.btnRoll) dom.btnRoll.addEventListener('click', handleRollAction);
-  if (dom.diceStageSlot) dom.diceStageSlot.addEventListener('click', handleRollAction);
-  if (dom.btnBank) dom.btnBank.addEventListener('click', handleBankAction);
-
-  // Atajos de teclado para PC (Espacio/Enter = Tirar, P/B = Plantarse)
+  // Atajos de teclado para escritorio (Espacio = Tirar, Enter = Plantarse, M = Mute)
   window.addEventListener('keydown', (e) => {
-    if (
-      dom.setupModal?.classList.contains('is-visible') ||
-      dom.winOverlay?.classList.contains('is-visible')
-    ) {
-      return;
-    }
-    if (e.code === 'Space' || e.code === 'Enter') {
+    if (e.target.tagName === 'INPUT') return; // No interceptar en campos de texto
+
+    if (e.code === 'Space') {
       e.preventDefault();
-      handleRollAction();
-    } else if (e.key === 'p' || e.key === 'P' || e.key === 'b' || e.key === 'B') {
+      handleRoll();
+    } else if (e.code === 'Enter') {
       e.preventDefault();
-      handleBankAction();
+      handleBank();
+    } else if (e.key === 'm' || e.key === 'M') {
+      audio.toggleMute();
+      updateAudioButton();
     }
   });
 
-  // Navegación del carrusel de jugadores
-  if (dom.carouselPrev) {
-    dom.carouselPrev.addEventListener('click', () => {
-      dom.playersCarousel?.scrollBy({ left: -140, behavior: 'smooth' });
-    });
-  }
-  if (dom.carouselNext) {
-    dom.carouselNext.addEventListener('click', () => {
-      dom.playersCarousel?.scrollBy({ left: 140, behavior: 'smooth' });
-    });
-  }
-
-  // Botón de Sonido / Mute
-  if (dom.btnAudioToggle) {
-    syncAudioButtonUI();
-    dom.btnAudioToggle.addEventListener('click', () => {
-      audioEngine.toggleMute();
-      syncAudioButtonUI();
-    });
-  }
-
-  /**
-   * Modal de Configuración de Partida (2 a 8 jugadores y meta de puntos)
-   */
-  function renderSetupModalPlayers() {
-    if (!dom.playersSetupList) return;
-    dom.playersSetupList.innerHTML = '';
-
-    setupDraftPlayers.forEach((name, idx) => {
-      const palette = PLAYER_PALETTES[idx % PLAYER_PALETTES.length];
-      const row = document.createElement('div');
-      row.className = 'player-setup-row';
-      row.innerHTML = `
-        <span class="player-color-dot" style="background:${palette.tint}"></span>
-        <input
-          type="text"
-          class="sketch-input player-name-input"
-          maxlength="12"
-          value="${name}"
-          placeholder="Jugador ${idx + 1}"
-          data-idx="${idx}"
-        >
-        ${
-          setupDraftPlayers.length > 2
-            ? `<button type="button" class="remove-player-btn" data-remove="${idx}" title="Eliminar">✕</button>`
-            : ''
-        }
-      `;
-      dom.playersSetupList.appendChild(row);
-    });
-
-    dom.playersSetupList.querySelectorAll('.player-name-input').forEach((input) => {
-      input.addEventListener('input', (e) => {
-        const i = Number(e.target.dataset.idx);
-        setupDraftPlayers[i] = e.target.value;
-      });
-    });
-
-    dom.playersSetupList.querySelectorAll('.remove-player-btn').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        const i = Number(e.currentTarget.dataset.remove);
-        if (setupDraftPlayers.length > 2) {
-          setupDraftPlayers.splice(i, 1);
-          renderSetupModalPlayers();
-        }
-      });
-    });
-
-    if (dom.btnAddPlayer) {
-      dom.btnAddPlayer.disabled = setupDraftPlayers.length >= 8;
-      dom.btnAddPlayer.textContent =
-        setupDraftPlayers.length >= 8
-          ? 'Máximo 8 jugadores'
-          : `+ Añadir Jugador (${setupDraftPlayers.length}/8)`;
-    }
-  }
-
-  function openSetupModal() {
-    setupDraftPlayers = stateEngine.players.map((p) => p.name);
-    setupDraftTarget = stateEngine.targetScore;
-    if (dom.customTargetInput) dom.customTargetInput.value = String(setupDraftTarget);
-
-    document.querySelectorAll('.target-preset-btn').forEach((btn) => {
-      btn.classList.toggle('is-selected', Number(btn.dataset.target) === setupDraftTarget);
-    });
-
-    renderSetupModalPlayers();
-    dom.setupModal?.classList.add('is-visible');
-  }
-
-  if (dom.btnOpenSetup) {
-    dom.btnOpenSetup.addEventListener('click', openSetupModal);
-  }
-  if (dom.btnCloseSetup) {
-    dom.btnCloseSetup.addEventListener('click', () => {
-      dom.setupModal?.classList.remove('is-visible');
-    });
-  }
-  if (dom.btnAddPlayer) {
-    const defaultExtras = ['SOFÍA', 'LUCAS', 'VALERIA', 'DIEGO', 'CAMILA', 'TOMÁS'];
-    dom.btnAddPlayer.addEventListener('click', () => {
-      if (setupDraftPlayers.length < 8) {
-        const nextName =
-          defaultExtras[setupDraftPlayers.length - 2] || `JUGADOR ${setupDraftPlayers.length + 1}`;
-        setupDraftPlayers.push(nextName);
-        renderSetupModalPlayers();
-      }
-    });
-  }
-
-  document.querySelectorAll('.target-preset-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      setupDraftTarget = Number(btn.dataset.target) || 100;
-      if (dom.customTargetInput) dom.customTargetInput.value = String(setupDraftTarget);
-      document.querySelectorAll('.target-preset-btn').forEach((b) => {
-        b.classList.toggle('is-selected', b === btn);
-      });
-    });
-  });
-
-  if (dom.customTargetInput) {
-    dom.customTargetInput.addEventListener('input', (e) => {
-      const val = Number(e.target.value);
-      if (val >= 10) {
-        setupDraftTarget = val;
-        document.querySelectorAll('.target-preset-btn').forEach((b) => {
-          b.classList.toggle('is-selected', Number(b.dataset.target) === val);
-        });
-      }
-    });
-  }
-
-  if (dom.btnStartConfiguredGame) {
-    dom.btnStartConfiguredGame.addEventListener('click', () => {
-      audioEngine.unlock();
-      dom.setupModal?.classList.remove('is-visible');
-      dom.winOverlay?.classList.remove('is-visible');
-      stateEngine.startNewGame({
-        playerNames: setupDraftPlayers,
-        targetScore: setupDraftTarget,
-      });
-    });
-  }
-
-  // Botones de Victoria: Revancha y Nueva Partida
-  if (dom.btnRematch) {
-    dom.btnRematch.addEventListener('click', () => {
-      dom.winOverlay?.classList.remove('is-visible');
-      stateEngine.rematch();
-    });
-  }
-  if (dom.btnNewSetupFromWin) {
-    dom.btnNewSetupFromWin.addEventListener('click', () => {
-      dom.winOverlay?.classList.remove('is-visible');
-      openSetupModal();
-    });
-  }
-
-  // Iniciar partida por defecto con JUAN, ANA y MATEO a 100 puntos
-  stateEngine.startNewGame({
-    playerNames: ['JUAN', 'ANA', 'MATEO'],
-    targetScore: 100,
-  });
-
-  // Exponer instancia global para pruebas automatizadas e inspección
-  window.GAROZO_GAME = {
-    stateEngine,
-    audioEngine,
-    animDirector,
-  };
-
-  return window.GAROZO_GAME;
-}
-
-if (typeof document !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => initGarozoApp());
-  } else {
-    initGarozoApp();
-  }
-}
+  // 11. Inicio inicial
+  renderPlayersConfig();
+  state.initGame(configPlayers, selectedGoal);
+});

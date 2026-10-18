@@ -2,209 +2,175 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>GAROZO! Party Game 🎲</title>
+  
+  <!-- Estilos del Sketchbook Vivo -->
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/animations.css">
+
+  <!-- Favicon e Icono de App -->
+  <link rel="icon" type="image/png" href="assets/sprites/masita_idle.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head>
 <body>
-  <main id="appShell" class="app-shell">
-    <!-- Cabecera Superior con Logo y Controles -->
-    <header class="top-brand-bar">
-      <div class="brand-logo-wrap">
-        <img id="brandLogoImg" class="brand-logo-img boil-effect" src="assets/sprites/logo_garozo.png" alt="GAROZO! party game">
-      </div>
-      <div class="top-utility-btns">
-        <button id="btnOpenSetup" type="button" class="sketch-icon-btn" title="Configurar jugadores y meta">
-          ⚙️ Partida
-        </button>
-        <button id="btnAudioToggle" type="button" class="sketch-icon-btn" title="Activar/Silenciar sonido">
-          🔊 Sonido
-        </button>
-      </div>
+
+  <!-- Contenedor Principal de la Libreta de Dibujo -->
+  <main class="sketchbook-container" id="sketchbookApp">
+    
+    <!-- Argollas de espiral en la parte superior -->
+    <header class="spiral-rings" aria-hidden="true">
+      <div class="spiral-ring"></div>
+      <div class="spiral-ring"></div>
+      <div class="spiral-ring"></div>
+      <div class="spiral-ring"></div>
+      <div class="spiral-ring"></div>
+      <div class="spiral-ring"></div>
+      <div class="spiral-ring"></div>
+      <div class="spiral-ring"></div>
     </header>
 
-    <!-- Libreta de Bocetos con Anillas -->
-    <div class="notebook-wrapper">
-      <!-- Masitas curiosas asomándose por los bordes de la libreta -->
-      <img class="peeking-masita peek-top boil-effect" src="assets/sprites/masita_idle.png" alt="Masita">
-      <img class="peeking-masita peek-left boil-effect" src="assets/sprites/masita_point.png" alt="Masita">
-      <img class="peeking-masita peek-bottom-right boil-effect" src="assets/sprites/masita_happy.png" alt="Masita">
+    <!-- Barra de Herramientas Superior -->
+    <nav class="top-bar">
+      <div class="logo-wrap" id="btnLogo" title="Acerca del juego">
+        <img src="assets/sprites/logo_garozo.png" class="logo-img boil-living" alt="GAROZO! party game">
+      </div>
 
-      <!-- Anillas metálicas dibujadas -->
-      <div id="notebookRings" class="notebook-rings" aria-hidden="true"></div>
+      <div class="top-actions">
+        <div class="target-badge" id="targetBadge" title="Meta de puntos para ganar">
+          🎯 <span id="targetScoreDisplay">100</span> pts
+        </div>
+        <button class="icon-btn" id="btnMute" title="Silenciar / Activar Sonido" aria-label="Audio">🔊</button>
+        <button class="icon-btn" id="btnSettings" title="Configurar Partida" aria-label="Ajustes">⚙️</button>
+      </div>
+    </nav>
 
-      <!-- Página Principal del Cuaderno -->
-      <section class="notebook-page">
-        <!-- 1. Marcador Superior: Carrusel de Jugadores -->
-        <div>
-          <div class="scoreboard-frame">
-            <button id="carouselPrev" type="button" class="carousel-nav-btn" aria-label="Anterior">&lt;</button>
-            <div id="playersCarousel" class="players-carousel" role="region" aria-label="Marcador de jugadores"></div>
-            <button id="carouselNext" type="button" class="carousel-nav-btn" aria-label="Siguiente">&gt;</button>
-          </div>
-          <div class="target-meta-strip">
-            <span id="turnStatusHint">Turno de JUAN</span>
-            <span id="targetScoreLabel" class="target-pill">META: 100 PTS</span>
-          </div>
+    <!-- Carrusel Superior de Jugadores (Tarjetas de papel) -->
+    <section class="players-carousel-wrapper" aria-label="Marcador de jugadores">
+      <div class="players-carousel" id="playersCarousel">
+        <!-- Renderizado dinámico de tarjetas de jugador -->
+      </div>
+    </section>
+
+    <!-- Zona Central: Medidor de Codicia y Escenario del Dado -->
+    <section class="center-zone">
+      
+      <!-- El Medidor de Codicia / Puntos en Riesgo -->
+      <div class="greed-meter-container" id="greedMeter">
+        <div class="turn-points-display">
+          <div class="turn-points-label">PUNTOS EN RIESGO</div>
+          <div class="turn-points-value" id="turnPointsValue">0</div>
+        </div>
+        <div class="tension-bar-wrap">
+          <div class="tension-bar-fill" id="tensionBarFill"></div>
+        </div>
+      </div>
+
+      <!-- Escenario: Masita Anfitriona + Dado 3D -->
+      <div class="stage-arena" id="stageArena">
+        
+        <!-- Masita Anfitriona -->
+        <div class="host-masita-wrap masita-idle-anim" id="hostMasitaWrap">
+          <img src="assets/sprites/masita_idle.png" class="host-masita-img boil-living" id="hostMasitaImg" alt="Masita Anfitriona">
+          <img src="assets/sprites/fx_dust.png" class="host-dust" id="hostDust" alt="Polvo">
+          <img src="assets/sprites/fx_sweat.png" class="host-sweat" id="hostSweat" alt="Sudor">
         </div>
 
-        <!-- 2. Zona Central: Medidor de Codicia y Escenario (Dado 3D + Masita Anfitriona) -->
-        <div class="arena-frame">
-          <!-- Medidor de puntos del turno y barra de tensión -->
-          <div class="greed-panel">
-            <h2 class="turn-label-title">LLEVAS:</h2>
-            <div class="turn-points-wrapper">
-              <div class="turn-points-rays" aria-hidden="true">
-                <span></span><span></span><span></span>
-              </div>
-              <span id="turnPointsValue" class="turn-points-number">0</span>
-              <span class="turn-points-unit">PTS</span>
-            </div>
-
-            <div class="greed-wedge-container">
-              <div class="greed-wedge-header">
-                <span>MEDIDOR DE CODICIA</span>
-                <span id="streakCounterLabel">Sin riesgo aún</span>
-              </div>
-              <div id="greedWedgeBar" class="greed-wedge-bar" aria-label="Nivel de riesgo de racha">
-                <div class="greed-segment"></div>
-                <div class="greed-segment"></div>
-                <div class="greed-segment"></div>
-                <div class="greed-segment"></div>
-                <div class="greed-segment"></div>
-                <div class="greed-segment"></div>
-              </div>
-            </div>
-
-            <p id="greedQuestionText" class="greed-question-text">+ ¿OTRA? o ¿PLANTAS?</p>
-          </div>
-
-          <!-- Escenario Interactivo: Cubo 3D en CSS y Masita Anfitriona -->
-          <div class="stage-interactive">
-            <div id="stageShoutLabel" class="stage-shout-label boil-effect">¡¡TIRAR!!</div>
-
-            <!-- Dado 3D con las 6 caras dibujadas -->
-            <div id="diceStageSlot" class="dice-stage-slot" title="Toca para tirar el dado">
-              <div id="diceScene" class="dice-scene">
-                <div id="diceCube" class="dice-cube">
-                  <div class="dice-face face-1"><img src="assets/sprites/dice/face_1.png" alt="Cara 1"></div>
-                  <div class="dice-face face-2"><img src="assets/sprites/dice/face_2.png" alt="Cara 2"></div>
-                  <div class="dice-face face-3"><img src="assets/sprites/dice/face_3.png" alt="Cara 3"></div>
-                  <div class="dice-face face-4"><img src="assets/sprites/dice/face_4.png" alt="Cara 4"></div>
-                  <div class="dice-face face-5"><img src="assets/sprites/dice/face_5.png" alt="Cara 5"></div>
-                  <div class="dice-face face-6"><img src="assets/sprites/dice/face_6.png" alt="Cara 6"></div>
-                </div>
-              </div>
-              <div id="diceShadow" class="dice-shadow"></div>
-            </div>
-
-            <!-- Masita Anfitriona + Efectos de Polvo y Sudor -->
-            <div class="host-masita-slot">
-              <img id="hostFxSweat" class="host-fx-sweat" src="assets/sprites/fx_sweat.png" alt="">
-              <img id="hostMasitaImg" class="host-masita-img state-idle" src="assets/sprites/masita_idle.png" alt="Masita Anfitriona">
-              <img id="hostFxDust" class="host-fx-dust" src="assets/sprites/fx_dust.png" alt="">
+        <!-- El Cubo 3D en CSS -->
+        <div class="dice-stage-wrap" id="diceStageWrap" title="¡Toca el dado para tirar!">
+          <div class="dice-scene" id="diceScene">
+            <div class="dice-cube" id="diceCube">
+              <div class="dice-face face-1"><img src="assets/sprites/dice/face_1.png" alt="Cara 1"></div>
+              <div class="dice-face face-2"><img src="assets/sprites/dice/face_2.png" alt="Cara 2"></div>
+              <div class="dice-face face-3"><img src="assets/sprites/dice/face_3.png" alt="Cara 3"></div>
+              <div class="dice-face face-4"><img src="assets/sprites/dice/face_4.png" alt="Cara 4"></div>
+              <div class="dice-face face-5"><img src="assets/sprites/dice/face_5.png" alt="Cara 5"></div>
+              <div class="dice-face face-6"><img src="assets/sprites/dice/face_6.png" alt="Cara 6"></div>
             </div>
           </div>
+          <div class="dice-shadow" id="diceShadow"></div>
         </div>
 
-        <!-- 3. Zona Inferior: Controles Táctiles Mobile-First -->
-        <div class="controls-footer">
-          <!-- Flecha manuscrita en SVG apuntando al botón de Tirar -->
-          <svg class="sketch-curved-arrow" viewBox="0 0 60 64" fill="none" aria-hidden="true">
-            <path d="M34 4 C42 22, 36 42, 16 54" stroke="#221e1b" stroke-width="4.5" stroke-linecap="round"/>
-            <path d="M26 55 L12 56 L18 42" stroke="#221e1b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="#221e1b"/>
-          </svg>
+      </div>
 
-          <button id="btnRollDice" type="button" class="action-note-btn btn-roll">
-            <span class="btn-title-text">TIRAR<br>DADO</span>
-            <span class="btn-sub-info">🎲 ¡Arriesgar!</span>
-          </button>
+      <!-- Pista visual de atajos en teclado PC -->
+      <div class="desktop-shortcuts-hint">
+        Atajos: <kbd>Espacio</kbd> = Tirar | <kbd>Enter</kbd> = Plantarse
+      </div>
 
-          <button id="btnBankScore" type="button" class="action-note-btn btn-bank" disabled>
-            <span class="btn-title-text">PLANTARSE</span>
-            <div class="btn-sub-info">
-              <img class="btn-bag-icon boil-effect" src="assets/sprites/icon_bag.png" alt="Bolsa">
-              <span id="bankPointsBadge" class="bank-points-pill">0 PTS</span>
-            </div>
-          </button>
+    </section>
+
+    <!-- Botones Táctiles Inferiores (Ergonómicos para el pulgar) -->
+    <footer class="bottom-controls">
+      <button class="btn-game btn-bank" id="btnBank" disabled>
+        <img src="assets/sprites/icon_bag.png" class="bag-icon" alt="Saquito">
+        <span>GUARDAR (<span id="bankPointsVal">0</span>)</span>
+      </button>
+
+      <button class="btn-game btn-roll" id="btnRoll">
+        <span>¡TIRAR DADO!</span> 🎲
+      </button>
+    </footer>
+
+    <!-- Overlay de Estampida Caótica «¡GAROZOOO!» -->
+    <div class="garozo-sequence-overlay" id="garozoOverlay"></div>
+
+    <!-- Overlay de Victoria «WIN!» -->
+    <div class="win-overlay" id="winOverlay"></div>
+
+    <!-- Modal de Configuración de Partida -->
+    <div class="modal-overlay" id="setupModal">
+      <div class="modal-card">
+        <h2 class="modal-title">🎲 NUEVA PARTIDA</h2>
+        
+        <!-- Meta de Puntos -->
+        <div class="form-group">
+          <label class="form-label">Meta de Puntos para Ganar:</label>
+          <div class="goal-chips" id="goalChips">
+            <button type="button" class="goal-chip" data-goal="50">50</button>
+            <button type="button" class="goal-chip active" data-goal="100">100</button>
+            <button type="button" class="goal-chip" data-goal="200">200</button>
+            <button type="button" class="goal-chip" data-goal="500">500</button>
+            <button type="button" class="goal-chip" data-goal="1000">1000</button>
+          </div>
+          <input type="number" class="input-pencil" id="customGoalInput" value="100" min="10" max="9999" placeholder="Meta personalizada">
         </div>
-      </section>
+
+        <!-- Jugadores (2 a 8) -->
+        <div class="form-group">
+          <label class="form-label">Jugadores (de 2 a 8):</label>
+          <div class="players-config-list" id="playersConfigList">
+            <!-- Filas de jugadores configurables -->
+          </div>
+          <button type="button" class="btn-add-p" id="btnAddPlayer">+ Agregar Jugador</button>
+        </div>
+
+        <button type="button" class="btn-primary" id="btnStartGame">¡EMPEZAR FIESTA!</button>
+      </div>
     </div>
+
+    <!-- Modal de Reglas Rápidas -->
+    <div class="modal-overlay" id="rulesModal">
+      <div class="modal-card">
+        <h2 class="modal-title">📜 CÓMO JUGAR</h2>
+        <ul style="padding-left: 20px; line-height: 1.6; font-size: 0.95rem; margin-bottom: 16px;">
+          <li>🎲 <strong>Tira el dado</strong> tantas veces como quieras en tu turno.</li>
+          <li>✨ <strong>Caras 2 al 6:</strong> Suman puntos a tu pozo en riesgo.</li>
+          <li>⚠️ <strong>Cara 1 («¡GAROZOOO!»):</strong> ¡Pierdes todo lo acumulado en este turno y pasa el turno!</li>
+          <li>💰 <strong>Plantarse (Guardar):</strong> Asegura tus puntos provisionales para siempre en tu marcador.</li>
+          <li>🏆 <strong>Victoria Inmediata:</strong> En cuanto tus puntos acumulados alcancen la meta, ¡Ganas al instante!</li>
+        </ul>
+        <button type="button" class="btn-primary" id="btnCloseRules">¡ENTENDIDO!</button>
+      </div>
+    </div>
+
   </main>
 
-  <!-- Secuencia Overlay «¡GAROZOOO!» (Sacó un 1) -->
-  <div id="garozoOverlay" class="garozo-stampede-overlay" aria-live="assertive">
-    <img id="garozoBannerImg" class="garozo-banner-img" src="assets/sprites/banner_garozo.png" alt="¡GAROZOOO!">
-    <div id="garozoSubtitle" class="garozo-lost-subtitle">¡SACÓ UN 1! Pierde todo y pasa el turno</div>
-    <div id="stampedeLane" class="stampede-lane"></div>
-  </div>
-
-  <!-- Secuencia Overlay «WIN!» (Victoria) -->
-  <div id="winOverlay" class="win-overlay" role="dialog" aria-modal="true" aria-labelledby="winnerNameText">
-    <div class="sketch-modal-card">
-      <img class="win-banner-img boil-effect" src="assets/sprites/banner_win.png" alt="WIN!">
-
-      <div id="winParadeStage" class="win-parade-stage">
-        <div class="winner-wooden-sign">
-          <div class="winner-sign-label">¡GANADOR DE LA PARTIDA!</div>
-          <div id="winnerNameText" class="winner-sign-name">JUAN</div>
-          <div id="winnerScoreText" class="winner-sign-score">102 PTS</div>
-        </div>
-
-        <div class="win-characters-row">
-          <img class="win-happy-dancer" src="assets/sprites/masita_happy.png" alt="Masita feliz">
-          <img class="win-trumpet-masita" src="assets/sprites/masita_trumpet.png" alt="Masita de la trompeta">
-          <img class="win-happy-dancer" src="assets/sprites/masita_happy.png" alt="Masita feliz">
-        </div>
-      </div>
-
-      <div id="standingsList" class="standings-list"></div>
-
-      <div class="modal-actions-row">
-        <button id="btnRematch" type="button" class="sketch-primary-btn">🔄 ¡REVANCHA!</button>
-        <button id="btnNewSetupFromWin" type="button" class="sketch-secondary-btn">⚙️ NUEVA PARTIDA</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal de Configuración de Partida (2 a 8 Jugadores y Meta) -->
-  <div id="setupModal" class="setup-modal-overlay" role="dialog" aria-modal="true">
-    <div class="sketch-modal-card">
-      <img class="brand-logo-img" src="assets/sprites/logo_garozo.png" alt="GAROZO!">
-
-      <div class="setup-section">
-        <h3 class="setup-section-title">
-          <span>🎯 Meta de Puntos</span>
-        </h3>
-        <div class="target-presets-grid">
-          <button type="button" class="target-preset-btn" data-target="50">50</button>
-          <button type="button" class="target-preset-btn is-selected" data-target="100">100</button>
-          <button type="button" class="target-preset-btn" data-target="200">200</button>
-          <button type="button" class="target-preset-btn" data-target="500">500</button>
-          <button type="button" class="target-preset-btn" data-target="1000">1000</button>
-        </div>
-        <div class="custom-target-row">
-          <label for="customTargetInput">Meta personalizada:</label>
-          <input id="customTargetInput" type="number" class="sketch-input" min="10" max="5000" value="100">
-        </div>
-      </div>
-
-      <div class="setup-section">
-        <h3 class="setup-section-title">
-          <span>👥 Jugadores (2 a 8)</span>
-        </h3>
-        <div id="playersSetupList" class="players-setup-list"></div>
-        <button id="btnAddPlayer" type="button" class="sketch-secondary-btn">+ Añadir Jugador</button>
-      </div>
-
-      <div class="modal-actions-row">
-        <button id="btnStartConfiguredGame" type="button" class="sketch-primary-btn">🎲 ¡EMPEZAR!</button>
-        <button id="btnCloseSetup" type="button" class="sketch-secondary-btn">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
-  <script type="module" src="js/app.js"></script>
+  <!-- Scripts del Juego -->
+  <script src="js/state.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
